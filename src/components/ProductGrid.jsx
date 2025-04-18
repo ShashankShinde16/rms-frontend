@@ -214,7 +214,7 @@ const ProductGrid = () => {
               </Link>
             ))}
         </div>
-      )};
+      )}
 
       {/* Pagination Controls */}
       {filteredProducts.length > productsPerPage && (

@@ -52,7 +52,7 @@ export default function Login() {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <img
                 className="mx-auto h-20 w-auto"
-                src="https://rms-ecommerce.s3.ap-south-1.amazonaws.com/RMS.png"
+                src="/images/Login-Logo.png"
                 alt="rms-ecommerce"
               />
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

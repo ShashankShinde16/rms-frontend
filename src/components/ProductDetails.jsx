@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import Navbar from "./Navbar";
@@ -20,6 +20,8 @@ const ProductDetails = () => {
     return null;
   }
 
+  
+  
   const [currentImage, setCurrentImage] = useState(product.variations[0].images[0]);
   const [selectedVariation, setSelectedVariation] = useState(product.variations[0]);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -115,6 +117,17 @@ const ProductDetails = () => {
   const handlePrev = () => {
     if (startIndex > 0) setStartIndex(startIndex - 1);
   };
+
+  useEffect(() => {
+    if (location.state?.product) {
+      setSelectedVariation(location.state.product.variations[0]);
+      setCurrentImage(location.state.product.variations[0].images[0]);
+      setSelectedSize(null);
+      setQuantity(1);
+      setPinCode("");
+    }
+  }, [location.state?.product]);
+  
 
   return (
     <>

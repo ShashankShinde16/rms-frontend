@@ -66,7 +66,7 @@ const SignUp = () => {
             <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
                 <div className="text-center mb-6">
                     <img
-                        src="https://rms-ecommerce.s3.ap-south-1.amazonaws.com/RMS.png"
+                        src="/images/Login-Logo.png"
                         alt="logo"
                         className="h-14 mx-auto mb-4"
                     />

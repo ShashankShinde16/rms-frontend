@@ -90,7 +90,7 @@ const Navbar = () => {
         <FaBars className="hamburger-icon" onClick={toggleMobileMenu} />
         <Link to="/">
           <img
-            src="/images/image-Photoroom.png" // Replace with your logo
+            src="/images/Logo.png" // Replace with your logo
             alt="Logo"
             className="navbar-logo-img"
           />

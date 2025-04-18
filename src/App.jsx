@@ -13,10 +13,10 @@ import RazorpayCheckout from "./components/RazorpayCheckout";
 import ProductByBrand from "./pages/productByBrand";
 import Order from "./pages/order";
 import NewArrivals from "./pages/newArrivals";
-import Profile from "./components/profile/ProfilePopup";
 import SignUp from "./pages/signup";
 import FlatOff from "./pages/flatOff";
 import NotFound from "./pages/notFound";
+import About from "./pages/About";
 
 function App() {
   return (
@@ -27,6 +27,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<h1>Contact</h1>} />
           <Route path="/order" element={<ProtectedRoute><Order /></ProtectedRoute>} />
           <Route path="/razorpay-checkout" element={<ProtectedRoute><RazorpayCheckout /></ProtectedRoute>} />
           {/* <Route path="/profile" element={<Profile />} /> */}
