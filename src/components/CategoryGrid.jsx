@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const API_URL = `http://13.200.204.1/api/v1/categories/`;
+const API_URL = `https://rmsjeans.com/api/v1/categories/`;
 
 const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
@@ -54,72 +54,66 @@ const CategoryGrid = () => {
         Explore Categories
       </h2>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
-        {currentPage > 0 && (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full mb-6">
+        {visibleCategories.map((category) => (
+          <Link
+            to={`/category/${category.name}`}
+            key={category._id}
+            state={{
+              categoryId: category._id,
+              categoryName: category.name,
+              categoryImage: category.Image,
+            }}
+            className="group bg-white shadow-lg rounded-xl overflow-hidden transform transition-transform hover:scale-[1.03] hover:shadow-xl"
+          >
+            <img
+              src={category.Image}
+              alt={category.name}
+              className="w-full h-44 md:h-56 lg:h-64 object-cover"
+            />
+            <div className="p-3 text-center font-semibold text-gray-700 group-hover:text-blue-600 transition">
+              {category.name}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-4">
           <button
             onClick={handlePrev}
-            className="mb-2 sm:mb-0 sm:mr-4 p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm hover:bg-gray-100 hover:shadow-md active:scale-95 transition duration-200 ease-in-out flex items-center justify-center"
+            disabled={currentPage === 0}
+            className={`p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-gray-100 hover:shadow-md active:scale-95"
+              }`}
             title="Previous Page"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-        )}
 
+          <span className="text-sm text-gray-700">
+            Page {currentPage + 1} of {totalPages}
+          </span>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full">
-          {visibleCategories.map((category) => (
-            <Link
-              to={`/category/${category.name}`}
-              key={category._id}
-              state={{
-                categoryId: category._id,
-                categoryName: category.name,
-                categoryImage: category.Image,
-              }}
-              className="group bg-white shadow-lg rounded-xl overflow-hidden transform transition-transform hover:scale-[1.03] hover:shadow-xl"
-            >
-              <img
-                src={category.Image}
-                alt={category.name}
-                className="w-full h-44 md:h-56 lg:h-64 object-cover"
-              />
-              <div className="p-3 text-center font-semibold text-gray-700 group-hover:text-blue-600 transition">
-                {category.name}
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {currentPage < totalPages - 1 && (
           <button
             onClick={handleNext}
-            className="mt-2 sm:mt-0 sm:ml-4 p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm hover:bg-gray-100 hover:shadow-md active:scale-95 transition duration-200 ease-in-out flex items-center justify-center"
+            disabled={currentPage === totalPages - 1}
+            className={`p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === totalPages - 1
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-gray-100 hover:shadow-md active:scale-95"
+              }`}
             title="Next Page"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
-        )}
+        </div>
+      )}
 
-
-      </div>
     </div>
   );
 };

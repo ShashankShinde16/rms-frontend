@@ -5,8 +5,8 @@ import Pagination from "./Pagination";
 import Cookies from "js-cookie";
 import FiltersSidebar from "./FiltersSidebar";
 
-const API_Brand_URL = `http://13.200.204.1/api/v1/products/brand/`;
-const API_Category_URL = `http://13.200.204.1/api/v1/products/category/`;
+const API_Brand_URL = `https://rmsjeans.com/api/v1/products/brand/`;
+const API_Category_URL = `https://rmsjeans.com/api/v1/products/category/`;
 
 const ProductList = ({ categoryId }) => {
     // Sample Product List

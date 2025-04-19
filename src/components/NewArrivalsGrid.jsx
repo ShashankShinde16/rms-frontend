@@ -7,7 +7,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import { Link } from "react-router-dom";
 
-const API_URL = `http://13.200.204.1/api/v1/categories/`;
+const API_URL = `https://rmsjeans.com/api/v1/categories/`;
 
 // Custom Arrow Components
 const CustomPrevArrow = (props) => {

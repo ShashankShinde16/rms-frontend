@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_ORDERS_URL = `http://13.200.204.1/api/v1/orders/all`; // Placeholder
+const API_ORDERS_URL = `https://rmsjeans.com/api/v1/orders/all`; // Placeholder
 
 const Order = () => {
     const [orders, setOrders] = useState([]);
@@ -88,10 +88,10 @@ const Order = () => {
                                     </div>
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm font-medium ${order.isDelivered === true
-                                                ? "bg-green-100 text-green-700"
-                                                : order.isDelivered === false
-                                                    ? "bg-yellow-100 text-yellow-700"
-                                                    : "bg-gray-100 text-gray-700"
+                                            ? "bg-green-100 text-green-700"
+                                            : order.isDelivered === false
+                                                ? "bg-yellow-100 text-yellow-700"
+                                                : "bg-gray-100 text-gray-700"
                                             }`}
                                     >
                                         {order.isDelivered === true ? "Delivered"

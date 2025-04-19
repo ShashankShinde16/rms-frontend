@@ -17,6 +17,7 @@ import SignUp from "./pages/signup";
 import FlatOff from "./pages/flatOff";
 import NotFound from "./pages/notFound";
 import About from "./pages/About";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/new-arrivals/:category" element={<NewArrivals />} />
           <Route path="/new-arrivals" element={<NewArrivals />} />
           <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} /> {/* Updated route */}
           <Route path="/order-confirmation" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
           {/* <Route path="/RazorpayCheckout" element={<RazorpayCheckout />} /> */}

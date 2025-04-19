@@ -6,8 +6,8 @@ import Cookies from "js-cookie";
 import FiltersSidebar from "./FiltersSidebar";
 import NoResults from "../util/NoFound";
 
-const API_Brand_URL = `http://13.200.204.1/api/v1/products/brand/`;
-const API_Category_URL = `http://13.200.204.1/api/v1/products/category/`;
+const API_Brand_URL = `https://rmsjeans.com/api/v1/products/brand/`;
+const API_Category_URL = `https://rmsjeans.com/api/v1/products/category/`;
 
 const ProductListBy = () => {
     const location = useLocation();
@@ -120,7 +120,8 @@ const ProductListBy = () => {
                     <img
                         src={categoryImage}
                         alt={categoryName}
-                        className="h-[500px] object-contain rounded-lg shadow-lg mb-4"
+                        className="w-full object-contain rounded-lg shadow-lg mb-4 
+             h-auto sm:h-auto md:h-[400px] lg:h-[500px]"
                     />
                 </div>
 
@@ -231,7 +232,7 @@ const ProductListBy = () => {
             >
                 {/* Overlay */}
                 <div
-                    className="absolute inset-0 bg-black bg-opacity-50"
+                    className="absolute inset-0 bg-transparent bg-opacity-50"
                     onClick={() => setIsSidebarOpen(false)}
                 ></div>
 

@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import NoResults from "../util/NoFound";
 
-const API_ALL_PRODUCTS = `http://13.200.204.1/api/v1/products/`;
+const API_ALL_PRODUCTS = `https://rmsjeans.com/api/v1/products/`;
 
 const FlatOff = () => {
     const [products, setProducts] = useState([]);
@@ -66,7 +66,8 @@ const FlatOff = () => {
                         <img
                             src={image}
                             alt={`Flat ${offerValue}% Off`}
-                            className="h-[500px] object-contain rounded-lg shadow-lg mb-4"
+                            className="w-full object-contain rounded-lg shadow-lg mb-4 
+             h-auto sm:h-auto md:h-[400px] lg:h-[500px]"
                         />
                     </div>
 

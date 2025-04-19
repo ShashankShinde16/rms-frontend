@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import NoResults from "../util/NoFound";
 
-const API_URL = `http://13.200.204.1/api/v1/brands/`;
+const API_URL = `https://rmsjeans.com/api/v1/brands/`;
 
 const BrandList = () => {
     const [brands, setBrands] = useState([]);

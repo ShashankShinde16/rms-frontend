@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import axios from "axios";
 
-const API_URL = `http://13.200.204.1/api/v1/users/`;
+const API_URL = `https://rmsjeans.com/api/v1/users/`;
 
 const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
@@ -99,14 +100,22 @@ const Navbar = () => {
 
       {/* Profile, Search, and Cart */}
       <div className="navbar-right">
-        {/* <div className="navbar-search">
+        <div className="navbar-search">
           <div className="search">
             <input
               type="text"
               className="search__input"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className="search__button">
+
+            <button className="search__button"
+              onClick={() => {
+                if (searchQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                }
+              }}>
               <svg
                 className="search__icon"
                 aria-hidden="true"
@@ -118,7 +127,7 @@ const Navbar = () => {
               </svg>
             </button>
           </div>
-        </div> */}
+        </div>
         <div className="navbar-actions">
           <div className="relative" ref={profileRef}>
             <FaUserAlt className="icon cursor-pointer" onClick={() => user_token ? setProfileOpen(!profileOpen) : navigate("/login")} />

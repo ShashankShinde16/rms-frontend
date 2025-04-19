@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_URL = `http://13.200.204.1/api/v1/auth/signin/`;
+const API_URL = `https://rmsjeans.com/api/v1/auth/signin/`;
 
 export default function Login() {
   const navigate = useNavigate();

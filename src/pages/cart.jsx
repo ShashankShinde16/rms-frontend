@@ -5,8 +5,8 @@ import Navbar from "../components/Navbar"; // Import Navbar
 import Cookies from "js-cookie";
 import axios from "axios";
 
-const API_URL = `http://13.200.204.1/api/v1/users/`;
-const API_COUPON_URL = `http://13.200.204.1/api/v1/coupons/apply/`;
+const API_URL = `https://rmsjeans.com/api/v1/users/`;
+const API_COUPON_URL = `https://rmsjeans.com/api/v1/coupons/apply/`;
 
 const Cart = () => {
   const { cart, cartItem, removeFromCart, updateQuantity, fetchCart } = useCart();
@@ -160,7 +160,7 @@ const Cart = () => {
     try {
       // 1. Create Razorpay Order on backend
       const { data } = await axios.post(
-        `http://13.200.204.1/api/v1/orders/checkOut/${id}`,
+        `https://rmsjeans.com/api/v1/orders/checkOut/${id}`,
         {
           shippingAddress: {
             street: shippingAddress.street,
@@ -191,7 +191,7 @@ const Cart = () => {
           // 2. Verify payment and create order
           try {
             const verifyRes = await axios.post(
-              "http://13.200.204.1/api/v1/orders/verify",
+              "https://rmsjeans.com/api/v1/orders/verify",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -245,9 +245,9 @@ const Cart = () => {
     <>
       <Navbar />
       <Toaster position="top-center" />
-      <div className="flex p-5 font-sans mt-12 space-x-6">
+      <div className="flex flex-col lg:flex-row p-5 font-sans mt-12 gap-6">
         {/* Left Section: Cart Items */}
-        <div className="flex-3 mr-5 w-2/3">
+        <div className="w-full lg:w-2/3">
           <h1 className="text-2xl font-semibold mb-5">Your Cart</h1>
           {cartItem.length > 0 ? (
             cartItem.map((item, index) => {
@@ -260,9 +260,10 @@ const Cart = () => {
                 : null;
 
               return (
-                <div key={index} className="flex items-center border border-gray-300 rounded-lg mb-5 p-4 shadow-sm hover:shadow-md">
+                <div key={index} className="flex flex-col sm:flex-row items-center border border-gray-300 rounded-lg mb-5 p-4 shadow-sm hover:shadow-md">
+
                   {/* Product Image */}
-                  <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="w-20 h-20 object-cover rounded-lg" />
+                  <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="w-24 h-24 object-cover rounded-lg mb-4 sm:mb-0 sm:mr-4" />
 
                   {/* Product Details */}
                   <div className="ml-4 flex-1">
@@ -315,7 +316,7 @@ const Cart = () => {
         </div>
 
         {/* Right Section: Price Summary */}
-        <div className="flex-1 border border-gray-300 rounded-lg p-5 shadow-sm">
+        <div className="w-full lg:w-1/3 border border-gray-300 rounded-lg p-5 shadow-sm">
           <h3 className="text-xl font-semibold mb-5">PRICE DETAILS</h3>
           <p className="flex justify-between mb-2">
             <span>Price ({cartItem.length} items)</span>
@@ -346,7 +347,7 @@ const Cart = () => {
             <input
               type="text"
               placeholder="Enter promo code"
-              className="p-2 border rounded-md w-full mb-2"
+              className="p-2 border rounded-md w-full text-sm"
               value={couponCode}
               onChange={(e) => setCouponCode(e.target.value)}
               disabled={isCouponApplied}
@@ -377,21 +378,21 @@ const Cart = () => {
             <div className="space-y-3 mb-5 text-sm">
               <input
                 type="text"
-                className="p-2 border rounded-md w-full"
+                className="p-2 border rounded-md w-full text-sm"
                 placeholder="Street"
                 value={shippingAddress.street}
                 onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
               />
               <input
                 type="text"
-                className="p-2 border rounded-md w-full"
+                className="p-2 border rounded-md w-full text-sm"
                 placeholder="City"
                 value={shippingAddress.city}
                 onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
               />
               <input
                 type="text"
-                className="p-2 border rounded-md w-full"
+                className="p-2 border rounded-md w-full text-sm"
                 placeholder="Phone"
                 value={shippingAddress.phone}
                 onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}

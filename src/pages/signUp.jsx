@@ -3,7 +3,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = `http://13.200.204.1/api/v1/auth/`;
+const API_URL = `https://rmsjeans.com/api/v1/auth/`;
 
 const SignUp = () => {
     const [step, setStep] = useState(1);

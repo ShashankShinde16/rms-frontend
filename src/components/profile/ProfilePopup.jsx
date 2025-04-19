@@ -4,7 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_URL = `http://13.200.204.1/api/v1/users/`;
+const API_URL = `https://rmsjeans.com/api/v1/users/`;
 
 const ProfilePopup = ({ me, onClose, fetchUser }) => {
   const user = me;
