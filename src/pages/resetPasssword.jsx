@@ -4,26 +4,20 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = `http://localhost:3000/api/v1/auth/`;
+const API_USER_URL = `http://localhost:3000/api/v1/users/`;
 
-const SignUp = () => {
+const ResetPassword = () => {
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
-    const [password, setPassword] = useState("");
-    const [userDetails, setUserDetails] = useState({
-        name: "",
-        phone: "",
-        city: "",
-        street: "",
-    });
+    const [newPassword, setNewPassword] = useState("");
 
     const navigate = useNavigate();
 
     const handleSendOtp = async () => {
-        console.log("Sending OTP to:", email);
         try {
-            await axios.post(`${API_URL}send-otp`, { email, purpose: "signup" });
-            toast.success("OTP sent to email!");
+            await axios.post(`${API_URL}send-otp`, { email, purpose: "reset" });
+            toast.success("OTP sent to your email");
             setStep(2);
         } catch (err) {
             toast.error(err.response?.data?.mssg || "Failed to send OTP");
@@ -33,31 +27,20 @@ const SignUp = () => {
     const handleVerifyOtp = async () => {
         try {
             await axios.post(`${API_URL}verify-otp`, { email, otp });
-            toast.success("OTP verified!");
+            toast.success("OTP verified");
             setStep(3);
         } catch (err) {
             toast.error(err.response?.data?.mssg || "Invalid OTP");
         }
     };
 
-    const handleSignup = async () => {
+    const handleResetPassword = async () => {
         try {
-            await axios.post(`${API_URL}signup`, {
-                email,
-                password,
-                name: userDetails.name,
-                addresses: [
-                    {
-                        phone: userDetails.phone,
-                        city: userDetails.city,
-                        street: userDetails.street,
-                    },
-                ],
-            });
-            toast.success("Account created successfully!");
+            await axios.patch(`${API_USER_URL}me`, { email, password: newPassword });
+            toast.success("Password reset successful");
             navigate("/login");
         } catch (err) {
-            toast.error(err.response?.data?.mssg || "Signup failed");
+            toast.error(err.response?.data?.mssg || "Failed to reset password");
         }
     };
 
@@ -70,11 +53,11 @@ const SignUp = () => {
                         alt="logo"
                         className="h-14 mx-auto mb-4"
                     />
-                    <h1 className="text-2xl font-semibold">Create your account</h1>
+                    <h1 className="text-2xl font-semibold">Reset Your Password</h1>
                     <p className="text-sm text-gray-500 mt-1">
-                        {step === 1 && "Enter your email to get started"}
-                        {step === 2 && "Verify the OTP sent to your email"}
-                        {step === 3 && "Set your password and fill in your details"}
+                        {step === 1 && "Enter your email to receive OTP"}
+                        {step === 2 && "Enter the OTP sent to your email"}
+                        {step === 3 && "Set your new password"}
                     </p>
                 </div>
 
@@ -83,7 +66,7 @@ const SignUp = () => {
                     <>
                         <input
                             type="email"
-                            placeholder="Email"
+                            placeholder="Enter your email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -92,7 +75,7 @@ const SignUp = () => {
                             onClick={handleSendOtp}
                             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                         >
-                            Next
+                            Send OTP
                         </button>
                     </>
                 )}
@@ -111,73 +94,32 @@ const SignUp = () => {
                             onClick={handleVerifyOtp}
                             className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
                         >
-                            Verify
+                            Verify OTP
                         </button>
                     </>
                 )}
 
-                {/* Step 3 - Details */}
+                {/* Step 3 - New Password */}
                 {step === 3 && (
                     <>
                         <input
                             type="password"
-                            placeholder="Create Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Full Name"
-                            value={userDetails.name}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, name: e.target.value })
-                            }
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Phone Number"
-                            value={userDetails.phone}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, phone: e.target.value })
-                            }
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="City"
-                            value={userDetails.city}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, city: e.target.value })
-                            }
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Street"
-                            value={userDetails.street}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, street: e.target.value })
-                            }
+                            placeholder="Enter new password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
                             className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
-
                         <button
-                            onClick={handleSignup}
+                            onClick={handleResetPassword}
                             className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
                         >
-                            Create Account
+                            Reset Password
                         </button>
                     </>
                 )}
 
                 <p className="mt-6 text-sm text-center text-gray-500">
-                    Already have an account?{" "}
+                    Remembered your password?{" "}
                     <span
                         className="text-blue-600 hover:underline cursor-pointer"
                         onClick={() => navigate("/login")}
@@ -192,4 +134,4 @@ const SignUp = () => {
     );
 };
 
-export default SignUp;
+export default ResetPassword;

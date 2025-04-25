@@ -18,6 +18,8 @@ import FlatOff from "./pages/flatOff";
 import NotFound from "./pages/notFound";
 import About from "./pages/About";
 import SearchResults from "./pages/SearchResults";
+import Wishlist from "./pages/wishlist";
+import ResetPassword from "./pages/resetPasssword";
 
 function App() {
   return (
@@ -26,8 +28,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<h1>Contact</h1>} />
           <Route path="/order" element={<ProtectedRoute><Order /></ProtectedRoute>} />

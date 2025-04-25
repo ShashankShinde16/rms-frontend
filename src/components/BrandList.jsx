@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import NoResults from "../util/NoFound";
 
-const API_URL = `https://rmsjeans.com/api/v1/brands/`;
+const API_URL = `http://localhost:3000/api/v1/brands/`;
 
 const BrandList = () => {
     const [brands, setBrands] = useState([]);
@@ -66,7 +66,7 @@ const BrandList = () => {
             {!loading && !error && brands.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {brands.map((brand) => (
-                        <Link to={`/brand/${brand.name}`} key={brand._id}>
+                        <Link to={`/brand/${brand.name}`} state={{brandImage: brand.logo}} key={brand._id}>
                             <div
                                 className="flex flex-col items-center bg-white p-4 shadow-lg rounded-xl transition-transform transform hover:scale-105"
                             >

@@ -3,9 +3,9 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import NoResults from "../util/NoFound";
 
-const API_PRODUCTS_URL = `https://rmsjeans.com/api/v1/products/`;
-const API_CATEGORIES_URL = `https://rmsjeans.com/api/v1/categories/`;
-const API_SUBCATEGORIES_URL = `https://rmsjeans.com/api/v1/subcategories/`;
+const API_PRODUCTS_URL = `http://localhost:3000/api/v1/products/`;
+const API_CATEGORIES_URL = `http://localhost:3000/api/v1/categories/`;
+const API_SUBCATEGORIES_URL = `http://localhost:3000/api/v1/subcategories/`;
 
 const ProductGrid = () => {
   const [products, setProducts] = useState([]);

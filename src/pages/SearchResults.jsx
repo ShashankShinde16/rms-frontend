@@ -7,7 +7,7 @@ import FiltersSidebar from "../components/FiltersSidebar";
 import Pagination from "../components/Pagination";
 import NoResults from "../util/NoFound";
 
-const API_URL = "https://rmsjeans.com/api/v1";
+const API_URL = "http://localhost:3000/api/v1";
 
 const SearchResults = () => {
   const { search } = useLocation();

@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import NoResults from "../util/NoFound";
 
-const API_ALL_PRODUCTS = `https://rmsjeans.com/api/v1/products/`;
+const API_ALL_PRODUCTS = `http://localhost:3000/api/v1/products/`;
 
 const FlatOff = () => {
     const [products, setProducts] = useState([]);

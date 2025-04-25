@@ -5,8 +5,8 @@ import Navbar from "../components/Navbar"; // Import Navbar
 import Cookies from "js-cookie";
 import axios from "axios";
 
-const API_URL = `https://rmsjeans.com/api/v1/users/`;
-const API_COUPON_URL = `https://rmsjeans.com/api/v1/coupons/apply/`;
+const API_URL = `http://localhost:3000/api/v1/users/`;
+const API_COUPON_URL = `http://localhost:3000/api/v1/coupons/apply/`;
 
 const Cart = () => {
   const { cart, cartItem, removeFromCart, updateQuantity, fetchCart } = useCart();
@@ -160,7 +160,7 @@ const Cart = () => {
     try {
       // 1. Create Razorpay Order on backend
       const { data } = await axios.post(
-        `https://rmsjeans.com/api/v1/orders/checkOut/${id}`,
+        `http://localhost:3000/api/v1/orders/checkOut/${id}`,
         {
           shippingAddress: {
             street: shippingAddress.street,
@@ -191,7 +191,7 @@ const Cart = () => {
           // 2. Verify payment and create order
           try {
             const verifyRes = await axios.post(
-              "https://rmsjeans.com/api/v1/orders/verify",
+              "http://localhost:3000/api/v1/orders/verify",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -211,8 +211,8 @@ const Cart = () => {
             );
 
             if (verifyRes.data.message === "success") {
-              fetchCart(); // Refresh cart after successful order
               toast.success("Order placed successfully!");
+              fetchCart();
             } else {
               toast.error("Payment verification failed");
             }

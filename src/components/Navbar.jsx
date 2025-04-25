@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaUserAlt, FaShoppingCart, FaBars } from "react-icons/fa";
+import { FaUserAlt, FaShoppingCart, FaBars, FaHeart } from "react-icons/fa";
 import { useCart } from "../context/CartContext"; // Access cart context
 import Cookies from "js-cookie";
 import ProfilePopup from "./profile/ProfilePopup"; // Import ProfilePopup component
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import axios from "axios";
 
-const API_URL = `https://rmsjeans.com/api/v1/users/`;
+const API_URL = `http://localhost:3000/api/v1/users/`;
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -144,6 +144,14 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center relative">
+            <Link to="/wishlist" className="icon cursor-pointer">
+              <FaHeart
+                className="icon"
+              />
+            </Link>
+          </div>
+
+          <div className="flex items-center relative">
             <FaShoppingCart
               className="icon"
               onClick={toggleCart} // Toggle cart visibility
@@ -158,14 +166,53 @@ const Navbar = () => {
       {/* Mobile Sliding Menu */}
       <div
         ref={mobileMenuRef}
-        className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}
+        className={`fixed top-0 left-0 h-full w-3/4 sm:w-1/2 md:w-1/3 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
-        <Link to="/">Home</Link>
-        <a href="/shop">Shop</a>
-        <a href="/order">Order</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
+        <div className="flex flex-col items-center p-6">
+          {/* Logo */}
+          <img
+            src="/images/Login-Logo.png"
+            alt="Logo"
+            className="w-20 h-20 mb-6"
+          />
+
+          {/* Navigation Links */}
+          <nav className="w-full flex flex-col gap-4 text-center">
+            <Link
+              to="/"
+              className="py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              to="/shop"
+              className="py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              Shop
+            </Link>
+            <Link
+              to="/coupon"
+              className="py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              Coupon
+            </Link>
+            <Link
+              to="/order"
+              className="py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              Order
+            </Link>
+            <Link
+              to="/about"
+              className="py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              About
+            </Link>
+          </nav>
+        </div>
       </div>
+
 
       {/* Cart Slider */}
       <div ref={cartRef} className={`cart-slider ${cartOpen ? "open" : ""}`}>

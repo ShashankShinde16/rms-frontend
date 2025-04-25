@@ -55,8 +55,8 @@ const demoProducts = [
     },
 ];
 
-const API_NEW_ARRIVALS_URL = `https://rmsjeans.com/api/v1/products/`;
-const API_NEW_ARRIVALS_Category_URL = `https://rmsjeans.com/api/v1/products/category/`;
+const API_NEW_ARRIVALS_URL = `http://localhost:3000/api/v1/products/`;
+const API_NEW_ARRIVALS_Category_URL = `http://localhost:3000/api/v1/products/category/`;
 
 const posterMap = {
     "Full sleeve": "https://d118ps6mg0w7om.cloudfront.net/media/boolfly/banner/SS-25-Full-Sleeves-Shirts.jpg",

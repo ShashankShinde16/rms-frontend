@@ -7,8 +7,8 @@ const CartContext = createContext();
 // Custom hook to use the Cart context
 const useCart = () => useContext(CartContext);
 
-const API_URL = `https://rmsjeans.com/api/v1/carts/`;
-const API_URL_Order = `https://rmsjeans.com/api/v1/orders/`;
+const API_URL = `http://localhost:3000/api/v1/carts/`;
+const API_URL_Order = `http://localhost:3000/api/v1/orders/`;
 
 const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);

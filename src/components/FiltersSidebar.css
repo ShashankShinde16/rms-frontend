@@ -13,11 +13,11 @@
     margin-bottom: 15px;
   }
   
-  .filter-category, .filter-price {
+  .filter-category, .filter-price, .filter-subcategory, .filter-size {
     margin-bottom: 20px;
   }
   
-  .filter-category h3, .filter-price h3 {
+  .filter-category h3, .filter-price h3, .filter-subcategory h3,.filter-size h3 {
     font-size: 16px;
     margin-bottom: 10px;
   }

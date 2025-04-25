@@ -23,13 +23,13 @@
 }
 
 .navbar-logo-img {
-  height: 30px;
+  height: 2.5rem;
   width: auto;
   max-width: 100%;
 }
 
 .hamburger-icon {
-  font-size: 24px;
+  font-size: 1.5rem;
   margin-right: 10px;
   cursor: pointer;
 }

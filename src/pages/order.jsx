@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_ORDERS_URL = `https://rmsjeans.com/api/v1/orders/all`; // Placeholder
+const API_ORDERS_URL = `http://localhost:3000/api/v1/orders/all`; // Placeholder
 
 const Order = () => {
     const [orders, setOrders] = useState([]);

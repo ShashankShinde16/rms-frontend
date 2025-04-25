@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import Navbar from "./Navbar";
@@ -6,6 +6,9 @@ import ProductList from "./ProductList";
 import Cookies from "js-cookie";
 import Footer from "./Footer";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+
+const API_URL = `http://localhost:3000/api/v1/wishlist/`;
 
 const ProductDetails = () => {
   const location = useLocation();
@@ -20,8 +23,6 @@ const ProductDetails = () => {
     return null;
   }
 
-  
-  
   const [currentImage, setCurrentImage] = useState(product.variations[0].images[0]);
   const [selectedVariation, setSelectedVariation] = useState(product.variations[0]);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -127,7 +128,35 @@ const ProductDetails = () => {
       setPinCode("");
     }
   }, [location.state?.product]);
-  
+
+  const addToWishlist = async (productId, toast) => {
+    try {
+      if (!user_token) {
+        toast.error("Please login first to add to wishlist.");
+        return false;
+      }
+
+      await axios.post(
+        `${API_URL}`,
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${user_token}`,
+          },
+        }
+      );
+      toast.success("Added to wishlist!");
+      return true;
+    } catch (err) {
+      if (err.response?.status === 400) {
+        toast.error("Product already in wishlist.");
+      } else {
+        toast.error("Failed to add to wishlist.");
+      }
+      return false;
+    }
+  };
+
 
   return (
     <>
@@ -251,8 +280,11 @@ const ProductDetails = () => {
               <button className="w-full py-3 bg-green-600 text-white rounded-lg" onClick={handleAddToCart}>
                 Add to Bag
               </button>
-              <button className="w-full py-3 bg-red-600 text-white rounded-lg" onClick={handleBuyNow}>
-                Buy Now
+              <button
+                className="w-full py-3 bg-red-600 text-white rounded-lg"
+                onClick={() => addToWishlist(product._id, toast)}
+              >
+                ❤️ Add to Wishlist
               </button>
             </div>
 
