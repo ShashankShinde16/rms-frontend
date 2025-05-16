@@ -3,9 +3,9 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import NoResults from "../util/NoFound";
 
-const API_PRODUCTS_URL = `http://localhost:3000/api/v1/products/`;
-const API_CATEGORIES_URL = `http://localhost:3000/api/v1/categories/`;
-const API_SUBCATEGORIES_URL = `http://localhost:3000/api/v1/subcategories/`;
+const API_PRODUCTS_URL = `${import.meta.env.VITE_API_BASE_URL}/products/`;
+const API_CATEGORIES_URL = `${import.meta.env.VITE_API_BASE_URL}/categories/`;
+const API_SUBCATEGORIES_URL = `${import.meta.env.VITE_API_BASE_URL}/subcategories/`;
 
 const ProductGrid = () => {
   const [products, setProducts] = useState([]);
@@ -100,7 +100,7 @@ const ProductGrid = () => {
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-[40vh]">
-        <div className="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-green-700 border-dashed rounded-full animate-spin"></div>
       </div>
     );
 
@@ -115,15 +115,23 @@ const ProductGrid = () => {
 
   return (
     <div className="p-5">
-      {/* Filter Dropdown */}
+      {/* Filter Dropdowns */}
       <div className="flex flex-col sm:flex-row justify-end gap-4 mb-6">
-        <div>
-          <label htmlFor="filter" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        {/* Category Dropdown */}
+        <div className="relative w-full sm:w-60">
+          <label htmlFor="filter" className="block text-sm font-semibold text-green-800 mb-1">
+            <span className="flex items-center gap-1">
+              <svg className="w-4 h-4 text-green-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              Category
+            </span>
+          </label>
           <select
             id="filter"
             value={filter}
             onChange={handleFilterChange}
-            className="w-full sm:w-48 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="block w-full p-2.5 bg-white border border-green-300 text-green-900 text-sm rounded-xl shadow-sm focus:ring-green-600 focus:border-green-600 transition duration-200 ease-in-out"
           >
             <option value="All">All</option>
             {categories.map((category) => (
@@ -134,13 +142,22 @@ const ProductGrid = () => {
           </select>
         </div>
 
-        <div>
-          <label htmlFor="subcategory-filter" className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+
+        {/* Subcategory Dropdown */}
+        <div className="relative w-full sm:w-60">
+          <label htmlFor="subcategory-filter" className="block text-sm font-semibold text-green-800 mb-1">
+            <span className="flex items-center gap-1">
+              <svg className="w-4 h-4 text-green-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+              </svg>
+              Subcategory
+            </span>
+          </label>
           <select
             id="subcategory-filter"
             value={selectedSubcategory}
             onChange={handleSubcategoryChange}
-            className="w-full sm:w-48 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="block w-full p-2.5 bg-white border border-green-300 text-green-900 text-sm rounded-xl shadow-sm focus:ring-green-600 focus:border-green-600 transition duration-200 ease-in-out"
           >
             <option value="All">All</option>
             {subcategories.map((subcat, i) => (
@@ -150,8 +167,8 @@ const ProductGrid = () => {
             ))}
           </select>
         </div>
-      </div>
 
+      </div>
 
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
@@ -166,39 +183,39 @@ const ProductGrid = () => {
               <Link
                 key={product._id}
                 to={`/product/${product._id}`}
-                className="rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:scale-105"
+                className="transform transition-transform hover:scale-[1.03]"
                 state={{ product }}
               >
-                <div className="product-card bg-white rounded-lg">
-                  {/* Main Product Image */}
-                  <div className="w-full h-64 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${selectedImages[product._id]})` }}>
-                  </div>
+                <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
+                  {/* Product Image */}
+                  <div
+                    className="w-full h-64 bg-center bg-cover"
+                    style={{ backgroundImage: `url(${selectedImages[product._id]})` }}
+                  ></div>
 
+                  {/* Product Info */}
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg">{product.name}</h3>
-
-                    {/* Pricing Section */}
-                    <p className="text-gray-700">
-                      <span className="line-through mr-2 text-gray-500">₹{product.basePrice}</span>
-                      <span className="font-bold text-green-600">₹{product.variations[0].sizes[0].price}</span>
-                      <span className="ml-2 bg-red-500 text-white px-2 py-1 text-xs rounded">
+                    <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                    <p className="text-sm text-gray-700 mb-2">
+                      <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
+                      <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
+                      <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
                         -{product.variations[0].sizes[0].discount}%
                       </span>
                     </p>
 
-                    {/* Variation Thumbnails */}
-                    <div className="variations-container mt-2 flex">
+                    {/* Variations */}
+                    <div className="flex mt-2">
                       {product.variations.map((variation, index) => {
                         const isSelected = selectedImages[product._id] === variation.images[0];
                         return (
                           <img
                             key={index}
                             src={variation.images[0]}
-                            alt={`${product.name} - Variation ${index + 1}`}
-                            className="w-8 h-8 rounded-full mr-2 cursor-pointer"
+                            alt=""
+                            className="w-8 h-8 rounded-full mr-2 border-2"
                             style={{
-                              border: isSelected ? "2px solid black" : "none",
+                              borderColor: isSelected ? "#003e25" : "transparent",
                             }}
                             onClick={(e) => {
                               e.preventDefault();
@@ -216,24 +233,19 @@ const ProductGrid = () => {
         </div>
       )}
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {filteredProducts.length > productsPerPage && (
-        <div className="flex justify-center mt-6 space-x-4">
+        <div className="flex justify-center mt-6 gap-4">
           <button
             onClick={handlePrev}
             disabled={currentPage === 0}
-            className={`p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm transition duration-200 ease-in-out flex items-center justify-center 
-        ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:shadow-md active:scale-95"}`}
+            className={`p-3 rounded-full bg-white text-green-800 border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-green-50 hover:shadow-md active:scale-95"
+              }`}
             title="Previous Page"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -241,24 +253,18 @@ const ProductGrid = () => {
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages - 1}
-            className={`p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm transition duration-200 ease-in-out flex items-center justify-center 
-        ${currentPage === totalPages - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:shadow-md active:scale-95"}`}
+            className={`p-3 rounded-full bg-white text-green-800 border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === totalPages - 1
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-green-50 hover:shadow-md active:scale-95"
+              }`}
             title="Next Page"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
       )}
-
     </div>
   );
 };

@@ -3,7 +3,6 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import Pagination from "./Pagination";
 import Cookies from "js-cookie";
-import FiltersSidebar from "./FiltersSidebar";
 
 const API_Brand_URL = `https://rmsjeans.com/api/v1/products/brand/`;
 const API_Category_URL = `https://rmsjeans.com/api/v1/products/category/`;
@@ -74,23 +73,23 @@ const ProductList = ({ categoryId }) => {
               :
               <h2 className="text-center text-2xl font-bold my-2">Products for {brandName}</h2>
           } */}
-            <h2 className="text-center text-2xl font-bold my-2">Related Product</h2>
+            <h2 className="text-center text-2xl text-green-900 font-bold my-2">Related Product</h2>
             <div className="flex justify-center mb-4 gap-2">
                 {currentProducts.length === 0 ? (
-                    <p className="text-center text-gray-500">No products available.</p>
+                    <p className="text-center text-green-900">No products available.</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {currentProducts.map((product) => (
                             <Link
-                                to={`/product/${product._id}`}
                                 key={product._id}
+                                to={`/product/${product._id}`}
                                 state={{ product }}
-                                className="rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:scale-105"
+                                className="transform transition-transform hover:scale-[1.03]"
                             >
-                                <div className="product-card">
+                                <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
                                     {/* Main Product Image */}
                                     <img
-                                        className={`w-full object-cover object-center`}
+                                        className="w-full object-cover object-center"
                                         src={selectedImages[product._id]}
                                         alt={product.name}
                                         style={{
@@ -99,19 +98,21 @@ const ProductList = ({ categoryId }) => {
                                     />
 
                                     <div className="p-4">
-                                        <h3 className="font-semibold">{product.name}</h3>
+                                        <h3 className="font-semibold text-green-900">{product.name}</h3>
 
                                         {/* Pricing Section */}
                                         <p className="text-gray-700">
-                                            <span className="line-through mr-2">₹{product.basePrice}</span>
-                                            <span className="font-bold text-green-600">₹{product.variations[0].sizes[0].price}</span>
+                                            <span className="line-through mr-2 text-sm">₹{product.basePrice}</span>
+                                            <span className="font-bold text-green-600 text-md">
+                                                ₹{product.variations[0].sizes[0].price}
+                                            </span>
                                             <span className="ml-2 bg-red-500 text-white px-2 py-1 text-xs rounded">
                                                 -{product.variations[0].sizes[0].discount}%
                                             </span>
                                         </p>
 
                                         {/* Variation Thumbnails */}
-                                        <div className="variations-container mt-2 flex">
+                                        <div className="variations-container mt-2 flex gap-2">
                                             {product.variations.map((variation, index) => {
                                                 const isSelected = selectedImages[product._id] === variation.images[0];
                                                 return (
@@ -119,14 +120,9 @@ const ProductList = ({ categoryId }) => {
                                                         key={index}
                                                         src={variation.images[0]}
                                                         alt={`${product.name} - Variation ${index + 1}`}
-                                                        className="variation-thumbnail"
+                                                        className="w-8 h-8 rounded-full cursor-pointer border-2"
                                                         style={{
-                                                            width: "30px",
-                                                            height: "30px",
-                                                            marginRight: "5px",
-                                                            borderRadius: "50%",
-                                                            border: isSelected ? "2px solid black" : "none",
-                                                            cursor: "pointer",
+                                                            borderColor: isSelected ? "#003e25" : "transparent",
                                                         }}
                                                         onClick={(e) => {
                                                             e.preventDefault();
@@ -142,6 +138,7 @@ const ProductList = ({ categoryId }) => {
                             </Link>
                         ))}
                     </div>
+
                 )}
             </div>
 

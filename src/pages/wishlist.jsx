@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 import { MdDelete } from "react-icons/md";
 import Footer from "../components/Footer";
 
-const API_URL = `http://localhost:3000/api/v1/wishlist/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/wishlist/`;
 
 const Wishlist = () => {
     const [wishlist, setWishlist] = useState([]);

@@ -4,43 +4,13 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_ORDERS_URL = `http://localhost:3000/api/v1/orders/all`; // Placeholder
+const API_ORDERS_URL = `${import.meta.env.VITE_API_BASE_URL}/orders/all`; // Placeholder
 
 const Order = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sortOrder, setSortOrder] = useState("latest"); // 'latest' | 'oldest'
     const user_token = Cookies.get("user_token");
-
-    const demoOrders = [
-        {
-            _id: "order001",
-            date: "2025-04-01",
-            total: 1599,
-            status: "Delivered",
-            items: [
-                {
-                    name: "Nike Air Max",
-                    qty: 1,
-                    price: 1599,
-                    image: "https://rms-ecommerce.s3.ap-south-1.amazonaws.com/products/a08463f8-e428-4709-b252-eb340afde262-screenshot_2025-03-21_040935.png"
-                },
-            ],
-        },
-        {
-            _id: "order002",
-            date: "2025-03-28",
-            total: 2599,
-            status: "Shipped",
-            items: [
-                {
-                    name: "Adidas Ultraboost",
-                    qty: 1,
-                    price: 2599,
-                    image: "https://rms-ecommerce.s3.ap-south-1.amazonaws.com/products/23259f57-8bbc-4f75-806c-b340a2f58b7e-whatsapp_image_2025-03-24_at_21.26.29_7f62dcca.jpg"
-                },
-            ],
-        },
-    ];
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -50,11 +20,14 @@ const Order = () => {
                         Authorization: `Bearer ${user_token}`,
                     },
                 });
-                setOrders(response.data.orders);
-                console.log("Fetched orders:", response.data.orders);
+
+                const sortedOrders = response.data.orders.sort(
+                    (a, b) => new Date(b.paidAt) - new Date(a.paidAt)
+                );
+
+                setOrders(sortedOrders);
             } catch (error) {
                 console.warn("API not ready or failed. Using demo orders.", error);
-                setOrders(demoOrders);
             } finally {
                 setLoading(false);
             }
@@ -63,28 +36,54 @@ const Order = () => {
         fetchOrders();
     }, []);
 
+    const handleSortChange = (e) => {
+        const value = e.target.value;
+        setSortOrder(value);
+
+        const sorted = [...orders].sort((a, b) =>
+            value === "latest"
+                ? new Date(b.paidAt) - new Date(a.paidAt)
+                : new Date(a.paidAt) - new Date(b.paidAt)
+        );
+
+        setOrders(sorted);
+    };
+
     return (
         <>
             <Navbar />
             <div className="p-6 mt-16 min-h-screen bg-gray-50">
-                <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Your Orders</h2>
+                <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto">
+                    <h2 className="text-3xl font-bold text-green-900">Your Orders</h2>
+                    <select
+                        value={sortOrder}
+                        onChange={handleSortChange}
+                        className="border rounded px-3 py-2 text-sm text-gray-700 shadow-sm"
+                    >
+                        <option value="latest">Sort by Latest</option>
+                        <option value="oldest">Sort by Oldest</option>
+                    </select>
+                </div>
+
                 {loading ? (
-                    <p className="text-center">Loading...</p>
+                    <p className="text-center text-green-900">Loading...</p>
                 ) : orders.length === 0 ? (
-                    <p className="text-center text-gray-500">No orders found.</p>
+                    <p className="text-center text-green-900">No orders found.</p>
                 ) : (
-                    <div className="grid gap-6 max-w-4xl mx-auto">
+                    <div className="grid gap-6 max-w-4xl mx-auto ">
                         {orders.map((order) => (
                             <div
                                 key={order._id}
-                                className="bg-white shadow-md rounded-xl p-5 border border-gray-200 hover:shadow-lg transition"
+                                className="bg-white shadow-md rounded-xl p-5 overflow-hidden bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300"
                             >
                                 <div className="flex justify-between items-center mb-4">
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-800">
                                             Order ID: <span className="text-blue-600">{order._id}</span>
                                         </h3>
-                                        <p className="text-sm text-gray-500">Placed on: {order.paidAt}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Placed on: {new Date(order.paidAt).toLocaleString()}
+                                        </p>
                                     </div>
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm font-medium ${order.isDelivered === true
@@ -94,8 +93,7 @@ const Order = () => {
                                                 : "bg-gray-100 text-gray-700"
                                             }`}
                                     >
-                                        {order.isDelivered === true ? "Delivered"
-                                            : "Shipped"}
+                                        {order.isDelivered === true ? "Delivered" : "Shipped"}
                                     </span>
                                 </div>
 
@@ -118,13 +116,13 @@ const Order = () => {
                                                     <p className="text-sm text-gray-600 font-medium">₹{item.price}</p>
                                                 </div>
                                             </div>
-                                        )
+                                        );
                                     })}
                                 </div>
 
                                 <div className="flex justify-end mt-4">
                                     <p className="font-semibold text-lg text-gray-800">
-                                        Total: ₹{order.total}
+                                        Total: ₹{order.totalOrderPrice}
                                     </p>
                                 </div>
                             </div>

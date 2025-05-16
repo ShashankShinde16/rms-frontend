@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import NoResults from "../util/NoFound";
 
-const API_URL = `http://localhost:3000/api/v1/brands/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/brands/`;
 
 const BrandList = () => {
     const [brands, setBrands] = useState([]);

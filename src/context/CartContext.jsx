@@ -7,8 +7,8 @@ const CartContext = createContext();
 // Custom hook to use the Cart context
 const useCart = () => useContext(CartContext);
 
-const API_URL = `http://localhost:3000/api/v1/carts/`;
-const API_URL_Order = `http://localhost:3000/api/v1/orders/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/carts/`;
+const API_URL_Order = `${import.meta.env.VITE_API_BASE_URL}/orders/`;
 
 const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
@@ -25,7 +25,6 @@ const CartProvider = ({ children }) => {
   }, [user_token]);
 
   const fetchCart = async () => {
-    console.log(user_token);
     try {
       const response = await axios.get(API_URL, {
         headers: {
@@ -35,11 +34,9 @@ const CartProvider = ({ children }) => {
       if (response.data.cart) {
         setCart(response.data.cart);
         setCartItem(response.data.cart.cartItem);
-        console.log(response.data);
       }
     } catch (err) {
       setError(err.message);
-      console.log(err.message);
     } finally {
       setLoading(false);
     }
@@ -47,9 +44,6 @@ const CartProvider = ({ children }) => {
 
   // Add product to cart
   const addToCart = async (product) => {
-    console.log("111111", product);
-    const user_details = JSON.parse(Cookies.get("user_details"));
-
     try {
       const response = await axios.post(API_URL, {
         productId: product.productID,
@@ -65,7 +59,6 @@ const CartProvider = ({ children }) => {
           }
         }
       );
-      console.log(response.data);
       await fetchCart();
     } catch (err) {
       console.error("Error adding to cart:", err);
@@ -81,7 +74,6 @@ const CartProvider = ({ children }) => {
           Authorization: `Bearer ${user_token}`
         }
       });
-      console.log(response.data);
       await fetchCart();
     }
     catch (err) {
@@ -99,10 +91,8 @@ const CartProvider = ({ children }) => {
       });
       await fetchCart();
       // setCart(response.data.cart.cartItem); // Assuming API returns an array of cart items
-      console.log(response.data);
     } catch (err) {
       setError(err.message);
-      console.log(err.message);
     } finally {
       setLoading(false);
     }
@@ -115,7 +105,6 @@ const CartProvider = ({ children }) => {
           Authorization: `Bearer ${user_token}`
         }
       });
-      console.log(response.data);
       await fetchCart();
     }
     catch (err) {
@@ -130,7 +119,6 @@ const CartProvider = ({ children }) => {
           Authorization: `Bearer ${user_token}`
         }
       });
-      console.log("order", response.data);
       await fetchCart();
     }
     catch (err) {

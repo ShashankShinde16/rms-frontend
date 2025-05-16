@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const API_URL = `http://localhost:3000/api/v1/categories/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/categories/`;
 
 const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
@@ -36,7 +36,7 @@ const CategoryGrid = () => {
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-[40vh]">
-        <div className="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-green-700 border-dashed rounded-full animate-spin"></div>
       </div>
     );
 
@@ -49,8 +49,8 @@ const CategoryGrid = () => {
     );
 
   return (
-    <div className="px-4 py-6 sm:px-6 lg:px-12 bg-gray-50 rounded-lg shadow-md transition-all duration-300">
-      <h2 className="text-center text-2xl sm:text-3xl font-bold text-gray-800 mb-6">
+    <div className="px-4 py-6 sm:px-6 lg:px-12 bg-white rounded-lg shadow-md transition-all duration-300">
+      <h2 className="text-center text-3xl font-bold text-green-800 mb-6">
         Explore Categories
       </h2>
 
@@ -64,14 +64,14 @@ const CategoryGrid = () => {
               categoryName: category.name,
               categoryImage: category.Image,
             }}
-            className="group bg-white shadow-lg rounded-xl overflow-hidden transform transition-transform hover:scale-[1.03] hover:shadow-xl"
+            className="group bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl overflow-hidden transform transition-transform hover:scale-[1.03] hover:shadow-lg"
           >
             <img
               src={category.Image}
               alt={category.name}
               className="w-full h-44 md:h-56 lg:h-64 object-cover"
             />
-            <div className="p-3 text-center font-semibold text-gray-700 group-hover:text-blue-600 transition">
+            <div className="p-3 text-center font-semibold text-green-900 group-hover:text-green-700 transition">
               {category.name}
             </div>
           </Link>
@@ -83,10 +83,11 @@ const CategoryGrid = () => {
           <button
             onClick={handlePrev}
             disabled={currentPage === 0}
-            className={`p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === 0
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-100 hover:shadow-md active:scale-95"
-              }`}
+            className={`p-3 rounded-full bg-white text-green-800 border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${
+              currentPage === 0
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-green-50 hover:shadow-md active:scale-95"
+            }`}
             title="Previous Page"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -94,17 +95,18 @@ const CategoryGrid = () => {
             </svg>
           </button>
 
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-green-800 font-medium">
             Page {currentPage + 1} of {totalPages}
           </span>
 
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages - 1}
-            className={`p-3 rounded-full bg-white text-black border border-gray-300 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === totalPages - 1
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-100 hover:shadow-md active:scale-95"
-              }`}
+            className={`p-3 rounded-full bg-white text-green-800 border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${
+              currentPage === totalPages - 1
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-green-50 hover:shadow-md active:scale-95"
+            }`}
             title="Next Page"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -113,7 +115,6 @@ const CategoryGrid = () => {
           </button>
         </div>
       )}
-
     </div>
   );
 };

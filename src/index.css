@@ -13,3 +13,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Profile Popup Slimmer & Floating Scrollbar */
+.profile-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(22, 163, 74, 0.4) transparent;
+}
+
+.profile-scrollbar::-webkit-scrollbar {
+  width: 6px; /* Slim scrollbar */
+}
+
+.profile-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Thumb styling: smaller, rounded, subtle */
+.profile-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(22, 163, 74, 0); /* Start invisible */
+  border-radius: 9999px;
+  min-height: 40px; /* Limits thumb height to be small */
+  transition: background-color 0.3s ease, min-height 0.3s ease;
+}
+
+/* On hover or scroll, thumb appears */
+.profile-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(22, 163, 74, 0.5); /* Fades in green thumb */
+  min-height: 40px; /* Keeps thumb small even when active */
+}
+

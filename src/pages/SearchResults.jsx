@@ -7,7 +7,7 @@ import FiltersSidebar from "../components/FiltersSidebar";
 import Pagination from "../components/Pagination";
 import NoResults from "../util/NoFound";
 
-const API_URL = "http://localhost:3000/api/v1";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 const SearchResults = () => {
   const { search } = useLocation();
@@ -20,6 +20,17 @@ const SearchResults = () => {
   // Filters
   const [selectedDiscounts, setSelectedDiscounts] = useState([]);
   const [selectedPrices, setSelectedPrices] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedSleeves, setSelectedSleeves] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  const [fabrics, setFabrics] = useState([]);
+  const [selectedFabrics, setSelectedFabrics] = useState([]);
+  const [sizes, setSizes] = useState([]); // Example sizes for filtering
+  const [selectedSizes, setSelectedSizes] = useState([]);
+
 
   const productsPerPage = 8;
 
@@ -43,6 +54,22 @@ const SearchResults = () => {
     }
   }, [query]);
 
+  useEffect(() => {
+    axios.get(`${API_URL}/subcategories`)
+      .then((response) => setSubCategories(response.data.getAllSubCategories))
+      .catch((err) => console.error("Error fetching subcategories:", err));
+
+    axios.get(`${API_URL}/products/fabrics`)
+      .then((response) => setFabrics(response.data.fabrics))
+      .catch((err) => console.error("Error fetching fabrics:", err));
+
+    axios.get(`${API_URL}/categories`)
+      .then((response) => setCategories(response.data.getAllCategories))
+      .catch((err) => console.error("Error fetching categories:", err));
+
+  }, []);
+
+
   const handleVariationChange = (productId, newImage) => {
     setSelectedImages((prevImages) => ({
       ...prevImages,
@@ -62,8 +89,66 @@ const SearchResults = () => {
     );
   };
 
+  const handleSubCategoryFilterChange = (id, isChecked) => {
+    setSelectedSubCategories(prev =>
+      isChecked ? [...prev, id] : prev.filter(sc => sc !== id)
+    );
+  };
+
+  const handleFabricFilterChange = (id, isChecked) => {
+    setSelectedFabrics(prev =>
+      isChecked ? [...prev, id] : prev.filter(f => f !== id)
+    );
+  };
+
+  const handleSizeFilterChange = (id, isChecked) => {
+    setSelectedSizes(prev =>
+      isChecked ? [...prev, id] : prev.filter(s => s !== id)
+    );
+  };
+
+  const handleCategoryFilterChange = (id, isChecked) => {
+    setSelectedCategories(prev =>
+      isChecked ? [...prev, id] : prev.filter(c => c !== id)
+    );
+  };
+
+  const handleColorFilterChange = (parentColor, isChecked) => {
+    setSelectedColors(prev =>
+      isChecked ? [...prev, parentColor] : prev.filter(c => c !== parentColor)
+    );
+  };
+
+  const handleSleeveFilterChange = (id, isChecked) => {
+    setSelectedSleeves(prev =>
+      isChecked ? [...prev, id] : prev.filter(s => s !== id)
+    );
+  };
+
   const applyFilters = () => {
     let filtered = [...results];
+
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedCategories.includes(product.category_id._id)
+      );
+    }
+
+    if (selectedSubCategories.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedSubCategories.includes(product.subcategory_id._id)
+      );
+    }
+
+    if (selectedSizes.length > 0) {
+      filtered = filtered.filter(product =>
+        product.variations.some(variation =>
+          variation.sizes.some(size =>
+            selectedSizes.includes(size.size)
+          )
+        )
+      );
+    }
 
     if (selectedDiscounts.length > 0) {
       filtered = filtered.filter(product => {
@@ -87,6 +172,26 @@ const SearchResults = () => {
           return false;
         });
       });
+    }
+
+    if (selectedFabrics.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedFabrics.includes(product.fabric)
+      );
+    }
+
+    if (selectedColors.length > 0) {
+      filtered = filtered.filter(product =>
+        product.variations.some(variation =>
+          selectedColors.includes(variation.color)
+        )
+      );
+    }
+
+    if (selectedSleeves.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedSleeves.includes(product.sleeve)
+      );
     }
 
     return filtered;
@@ -129,7 +234,18 @@ const SearchResults = () => {
             <FiltersSidebar
               onDiscountChange={handleDiscountFilterChange}
               onPriceChange={handlePriceFilterChange}
+              onSubCategoryChange={handleSubCategoryFilterChange}
+              subCategories={subCategories}
+              onSizeChange={handleSizeFilterChange}
+              onColorChange={handleColorFilterChange}
+              categories={categories}
+              onCategoryChange={handleCategoryFilterChange}
+              fabrics={fabrics}
+              onSleeveChange={handleSleeveFilterChange}
+              onFabricChange={handleFabricFilterChange}
             />
+
+
           </div>
 
           {/* Product Grid */}
@@ -137,54 +253,58 @@ const SearchResults = () => {
             {currentProducts.length === 0 ? (
               <>
                 <NoResults />
-                <p className="text-center text-gray-500">No products found.</p>
+                <p className="text-center text-green-900">No products found.</p>
               </>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {currentProducts.map((product) => (
                   <Link
                     to={`/product/${product._id}`}
                     key={product._id}
                     state={{ product }}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:scale-[1.02]"
+                    className="transform transition-transform hover:scale-[1.03]"
                   >
-                    <img
-                      className="w-full h-[250px] object-cover object-center"
-                      src={selectedImages[product._id]}
-                      alt={product.name}
-                    />
+                    <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
 
-                    <div className="p-4">
-                      <h3 className="font-semibold text-lg">{product.name}</h3>
+                      {/* Product Image */}
+                      <div
+                        className="w-full h-64 bg-center bg-cover"
+                        style={{ backgroundImage: `url(${selectedImages[product._id]})` }}
+                      ></div>
 
-                      <p className="text-gray-700 mt-1">
-                        <span className="line-through mr-2 text-sm">₹{product.basePrice}</span>
-                        <span className="font-bold text-green-600 text-md">
-                          ₹{product.variations[0].sizes[0].price}
-                        </span>
-                        <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
-                          -{product.variations[0].sizes[0].discount}%
-                        </span>
-                      </p>
+                      {/* Product Info */}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                        <p className="text-sm text-gray-700 mb-2">
+                          <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
+                          <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
+                          <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
+                            -{product.variations[0].sizes[0].discount}%
+                          </span>
+                        </p>
 
-                      <div className="mt-2 flex gap-2">
-                        {product.variations.map((variation, index) => {
-                          const isSelected = selectedImages[product._id] === variation.images[0];
-                          return (
-                            <img
-                              key={index}
-                              src={variation.images[0]}
-                              alt={`${product.name} - Variation ${index + 1}`}
-                              className={`w-8 h-8 rounded-full cursor-pointer border-2 ${isSelected ? "border-black" : "border-transparent"
-                                }`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleVariationChange(product._id, variation.images[0]);
-                              }}
-                            />
-                          );
-                        })}
+                        {/* Variations */}
+                        <div className="flex mt-2">
+                          {product.variations.map((variation, index) => {
+                            const isSelected = selectedImages[product._id] === variation.images[0];
+                            return (
+                              <img
+                                key={index}
+                                src={variation.images[0]}
+                                alt={`${product.name} - Variation ${index + 1}`}
+                                className="w-8 h-8 rounded-full mr-2 border-2 cursor-pointer"
+                                style={{
+                                  borderColor: isSelected ? "#003e25" : "transparent",
+                                }}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleVariationChange(product._id, variation.images[0]);
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -203,6 +323,7 @@ const SearchResults = () => {
               </div>
             )}
           </div>
+
         </div>
       </div>
 
@@ -229,7 +350,17 @@ const SearchResults = () => {
           <FiltersSidebar
             onDiscountChange={handleDiscountFilterChange}
             onPriceChange={handlePriceFilterChange}
+            onSubCategoryChange={handleSubCategoryFilterChange}
+            subCategories={subCategories}
+            onSizeChange={handleSizeFilterChange}
+            onColorChange={handleColorFilterChange}
+            categories={categories}
+            onCategoryChange={handleCategoryFilterChange}
+            fabrics={fabrics}
+            onSleeveChange={handleSleeveFilterChange}
+            onFabricChange={handleFabricFilterChange}
           />
+
         </div>
       </div>
 

@@ -8,55 +8,9 @@ import { useLocation } from "react-router-dom";
 import FiltersSidebar from "../components/FiltersSidebar";
 import NoResults from "../util/NoFound";
 
-const demoProducts = [
-    {
-        _id: "1",
-        name: "Nike Air Max",
-        basePrice: 7999,
-        variations: [
-            {
-                images: ["/images/nike-air-max-1.jpg"],
-                sizes: [{ price: 6999, discount: 12 }],
-            },
-        ],
-    },
-    {
-        _id: "2",
-        name: "Adidas Ultraboost",
-        basePrice: 9999,
-        variations: [
-            {
-                images: ["/images/adidas-ultraboost-1.jpg"],
-                sizes: [{ price: 8499, discount: 15 }],
-            },
-        ],
-    },
-    {
-        _id: "3",
-        name: "Puma RS-X",
-        basePrice: 7499,
-        variations: [
-            {
-                images: ["/images/puma-rs-x-1.jpg"],
-                sizes: [{ price: 6499, discount: 13 }],
-            },
-        ],
-    },
-    {
-        _id: "4",
-        name: "Reebok Classic",
-        basePrice: 6599,
-        variations: [
-            {
-                images: ["/images/reebok-classic-1.jpg"],
-                sizes: [{ price: 5599, discount: 15 }],
-            },
-        ],
-    },
-];
 
-const API_NEW_ARRIVALS_URL = `http://localhost:3000/api/v1/products/`;
-const API_NEW_ARRIVALS_Category_URL = `http://localhost:3000/api/v1/products/category/`;
+const API_NEW_ARRIVALS_URL = `${import.meta.env.VITE_API_BASE_URL}`;
+const API_NEW_ARRIVALS_Category_URL = `${import.meta.env.VITE_API_BASE_URL}/products/category/`;
 
 const posterMap = {
     "Full sleeve": "https://d118ps6mg0w7om.cloudfront.net/media/boolfly/banner/SS-25-Full-Sleeves-Shirts.jpg",
@@ -78,10 +32,21 @@ const NewArrivals = () => {
     const [selectedImages, setSelectedImages] = useState({});
     const user_token = Cookies.get("user_token");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [subCategories, setSubCategories] = useState([]);
+    const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedColors, setSelectedColors] = useState([]);
+    const [selectedSleeves, setSelectedSleeves] = useState([]);
+    const [fabrics, setFabrics] = useState([]);
+    const [selectedFabrics, setSelectedFabrics] = useState([]);
+    const [sizes, setSizes] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState([]);
+
 
     useEffect(() => {
         const fetchNewArrivals = async () => {
-            const URL = categoryId ? `${API_NEW_ARRIVALS_Category_URL}${categoryId}` : `${API_NEW_ARRIVALS_URL}`;
+            const URL = categoryId ? `${API_NEW_ARRIVALS_Category_URL}${categoryId}` : `${API_NEW_ARRIVALS_URL}/products/`;
             try {
                 const response = await axios.get(`${URL}`);
 
@@ -113,6 +78,23 @@ const NewArrivals = () => {
 
         fetchNewArrivals();
     }, []);
+
+    useEffect(() => {
+        // Fetch subcategories and fabrics
+        axios.get(`${API_NEW_ARRIVALS_URL}/subcategories`)
+            .then((response) => setSubCategories(response.data.getAllSubCategories))
+            .catch((err) => console.error("Error fetching subcategories:", err));
+
+        axios.get(`${API_NEW_ARRIVALS_URL}/products/fabrics`)
+            .then((response) => setFabrics(response.data.fabrics))
+            .catch((err) => console.error("Error fetching fabrics:", err));
+
+        axios.get(`${API_NEW_ARRIVALS_URL}/categories`)
+            .then((response) => setCategories(response.data.getAllCategories))
+            .catch((err) => console.error("Error fetching categories:", err));
+
+    }, []);
+
 
     useEffect(() => {
         if (categoryName && posterMap[categoryName]) {
@@ -151,34 +133,121 @@ const NewArrivals = () => {
         );
     };
 
-    const getFilteredProducts = () => {
-        return products.filter(product => {
-            const discount = product.variations[0].sizes[0].discount;
-            const price = product.variations[0].sizes[0].price;
-
-            let matchesDiscount = selectedDiscounts.length === 0 || selectedDiscounts.some(range => {
-                if (range === "discount-5-10") return discount >= 5 && discount <= 10;
-                if (range === "discount-15-20") return discount >= 15 && discount <= 20;
-                if (range === "discount-25") return discount >= 25;
-                return false;
-            });
-
-            let matchesPrice = selectedPrices.length === 0 || selectedPrices.some(range => {
-                if (range === "price-under-500") return price < 500;
-                if (range === "price-500-1000") return price >= 500 && price <= 1000;
-                if (range === "price-above-1000") return price > 1000;
-                return false;
-            });
-
-            return matchesDiscount && matchesPrice;
-        });
+    const handleSubCategoryFilterChange = (id, isChecked) => {
+        setSelectedSubCategories(prev =>
+            isChecked ? [...prev, id] : prev.filter(sc => sc !== id)
+        );
     };
 
-    const filteredProducts = getFilteredProducts();
+    const handleFabricFilterChange = (id, isChecked) => {
+        setSelectedFabrics(prev =>
+            isChecked ? [...prev, id] : prev.filter(f => f !== id)
+        );
+    };
+
+    const handleSizeFilterChange = (id, isChecked) => {
+        setSelectedSizes(prev =>
+            isChecked ? [...prev, id] : prev.filter(s => s !== id)
+        );
+    };
+
+    const handleCategoryFilterChange = (id, isChecked) => {
+        setSelectedCategories(prev =>
+            isChecked ? [...prev, id] : prev.filter(c => c !== id)
+        );
+    };
+
+    const handleColorFilterChange = (parentColor, isChecked) => {
+        setSelectedColors(prev =>
+            isChecked ? [...prev, parentColor] : prev.filter(c => c !== parentColor)
+        );
+    };
+
+    const handleSleeveFilterChange = (id, isChecked) => {
+        setSelectedSleeves(prev =>
+            isChecked ? [...prev, id] : prev.filter(s => s !== id)
+        );
+    };
+
+    const applyFilters = () => {
+        let filtered = [...products];
+
+        if (selectedCategories.length > 0) {
+            filtered = filtered.filter(product =>
+                selectedCategories.includes(product.category_id._id)
+            );
+        }
+
+        if (selectedSubCategories.length > 0) {
+            filtered = filtered.filter(product =>
+                selectedSubCategories.includes(product.subcategory_id._id)
+            );
+        }
+
+        if (selectedSizes.length > 0) {
+            filtered = filtered.filter(product =>
+                product.variations.some(variation =>
+                    variation.sizes.some(size =>
+                        selectedSizes.includes(size.size)
+                    )
+                )
+            );
+        }
+
+        if (selectedDiscounts.length > 0) {
+            filtered = filtered.filter(product => {
+                const discount = product.variations[0]?.sizes[0]?.discount || 0;
+                return selectedDiscounts.some(id => {
+                    if (id === "discount-5-10") return discount >= 5 && discount < 15;
+                    if (id === "discount-15-20") return discount >= 15 && discount < 25;
+                    if (id === "discount-25") return discount >= 25;
+                    return false;
+                });
+            });
+        }
+
+        if (selectedPrices.length > 0) {
+            filtered = filtered.filter(product => {
+                const price = product.variations[0]?.sizes[0]?.price || 0;
+                return selectedPrices.some(id => {
+                    if (id === "price-under-500") return price < 500;
+                    if (id === "price-500-1000") return price >= 500 && price <= 1000;
+                    if (id === "price-above-1000") return price > 1000;
+                    return false;
+                });
+            });
+        }
+
+        if (selectedColors.length > 0) {
+            filtered = filtered.filter(product =>
+                product.variations.some(variation =>
+                    selectedColors.some(selectedParentColor =>
+                        colorGroups[selectedParentColor]?.includes(variation.color)
+                    )
+                )
+            );
+        }
+
+        if (selectedSleeves.length > 0) {
+            filtered = filtered.filter(product =>
+                selectedSleeves.includes(product.sleeve)
+            );
+        }
+
+        if (selectedFabrics.length > 0) {
+            filtered = filtered.filter(product =>
+                selectedFabrics.includes(product.fabric)
+            );
+        }
+
+        return filtered;
+    };
+
+    const filteredProducts = applyFilters();
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const startIndex = (currentPage - 1) * productsPerPage;
-    const endIndex = startIndex + productsPerPage;
-    const currentProducts = filteredProducts.slice(startIndex, endIndex);
+    const currentProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
+
 
     return (
         <>
@@ -215,7 +284,18 @@ const NewArrivals = () => {
                             <FiltersSidebar
                                 onDiscountChange={handleDiscountFilterChange}
                                 onPriceChange={handlePriceFilterChange}
+                                onSubCategoryChange={handleSubCategoryFilterChange}
+                                subCategories={subCategories}
+                                onSizeChange={handleSizeFilterChange}
+                                onColorChange={handleColorFilterChange}
+                                categories={categories}
+                                onCategoryChange={handleCategoryFilterChange}
+                                fabrics={fabrics}
+                                onSleeveChange={handleSleeveFilterChange}
+                                onFabricChange={handleFabricFilterChange}
                             />
+
+
                         </div>
 
                         {/* Product Grid */}
@@ -223,7 +303,7 @@ const NewArrivals = () => {
                             {filteredProducts.length === 0 ? (
                                 <>
                                     <NoResults />
-                                    <p className="text-center text-gray-500">No new arrivals available.</p>
+                                    <p className="text-center text-green-900">No new arrivals available.</p>
                                 </>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -232,25 +312,29 @@ const NewArrivals = () => {
                                             to={`/product/${product._id}`}
                                             key={product._id}
                                             state={{ product }}
-                                            className="rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:scale-105"
+                                            className="transform transition-transform hover:scale-[1.03]"
                                         >
-                                            <div className="product-card">
-                                                <img
-                                                    className="w-full object-cover object-center"
-                                                    src={selectedImages[product._id]}
-                                                    alt={product.name}
-                                                    style={{ height: "300px" }}
-                                                />
+                                            <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
+
+                                                {/* Product Image */}
+                                                <div
+                                                    className="w-full h-64 bg-center bg-cover"
+                                                    style={{ backgroundImage: `url(${selectedImages[product._id]})` }}
+                                                ></div>
+
+                                                {/* Product Info */}
                                                 <div className="p-4">
-                                                    <h3 className="font-semibold">{product.name}</h3>
-                                                    <p className="text-gray-700">
-                                                        <span className="line-through mr-2">₹{product.basePrice}</span>
-                                                        <span className="font-bold text-green-600">₹{product.variations[0].sizes[0].price}</span>
-                                                        <span className="ml-2 bg-red-500 text-white px-2 py-1 text-xs rounded">
+                                                    <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                                                    <p className="text-sm text-gray-700 mb-2">
+                                                        <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
+                                                        <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
+                                                        <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
                                                             -{product.variations[0].sizes[0].discount}%
                                                         </span>
                                                     </p>
-                                                    <div className="variations-container mt-2 flex">
+
+                                                    {/* Variations */}
+                                                    <div className="flex mt-2">
                                                         {product.variations.map((variation, index) => {
                                                             const isSelected = selectedImages[product._id] === variation.images[0];
                                                             return (
@@ -258,14 +342,9 @@ const NewArrivals = () => {
                                                                     key={index}
                                                                     src={variation.images[0]}
                                                                     alt={`${product.name} - Variation ${index + 1}`}
-                                                                    className="variation-thumbnail"
+                                                                    className="w-8 h-8 rounded-full mr-2 border-2 cursor-pointer"
                                                                     style={{
-                                                                        width: "30px",
-                                                                        height: "30px",
-                                                                        marginRight: "5px",
-                                                                        borderRadius: "50%",
-                                                                        border: isSelected ? "2px solid black" : "none",
-                                                                        cursor: "pointer",
+                                                                        borderColor: isSelected ? "#003e25" : "transparent",
                                                                     }}
                                                                     onClick={(e) => {
                                                                         e.preventDefault();
@@ -283,6 +362,7 @@ const NewArrivals = () => {
                                 </div>
                             )}
                         </div>
+
                     </div>
 
                     {/* Pagination */}
@@ -311,7 +391,7 @@ const NewArrivals = () => {
                 ></div>
 
                 {/* Drawer */}
-                <div className="absolute left-0 top-0 h-full w-auto max-w-sm bg-white p-4 shadow-lg z-50">
+                <div className="absolute left-0 top-0 h-full w-3/4 max-w-sm bg-white p-4 shadow-lg z-50">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-bold">Filters</h3>
                         <button onClick={() => setIsSidebarOpen(false)} className="text-xl font-bold">&times;</button>
@@ -319,6 +399,15 @@ const NewArrivals = () => {
                     <FiltersSidebar
                         onDiscountChange={handleDiscountFilterChange}
                         onPriceChange={handlePriceFilterChange}
+                        onSubCategoryChange={handleSubCategoryFilterChange}
+                        subCategories={subCategories}
+                        onSizeChange={handleSizeFilterChange}
+                        onColorChange={handleColorFilterChange}
+                        categories={categories}
+                        onCategoryChange={handleCategoryFilterChange}
+                        fabrics={fabrics}
+                        onSleeveChange={handleSleeveFilterChange}
+                        onFabricChange={handleFabricFilterChange}
                     />
                 </div>
             </div>

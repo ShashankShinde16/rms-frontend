@@ -4,11 +4,14 @@ import axios from "axios";
 import Pagination from "./Pagination";
 import Cookies from "js-cookie";
 import FiltersSidebar from "./FiltersSidebar";
+import { colorGroups } from "../util/colorGroups";
 import NoResults from "../util/NoFound";
 
-const API_Brand_URL = `http://localhost:3000/api/v1/products/brand/`;
-const API_Category_URL = `http://localhost:3000/api/v1/products/category/`;
-const API_SUBCATEGORIES_URL = `http://localhost:3000/api/v1/subcategories/`;
+const API_Brand_URL = `${import.meta.env.VITE_API_BASE_URL}/products/brand/`;
+const API_Category_URL = `${import.meta.env.VITE_API_BASE_URL}/products/category/`;
+const API_CATEGORIES_URL = `${import.meta.env.VITE_API_BASE_URL}/categories`;
+const API_SUBCATEGORIES_URL = `${import.meta.env.VITE_API_BASE_URL}/subcategories/`;
+const API_FABRICS_URL = `${import.meta.env.VITE_API_BASE_URL}/products/fabrics`;
 
 const ProductListBy = () => {
   const location = useLocation();
@@ -18,8 +21,14 @@ const ProductListBy = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedDiscounts, setSelectedDiscounts] = useState([]);
   const [selectedPrices, setSelectedPrices] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedSleeves, setSelectedSleeves] = useState([]);
+  const [fabrics, setFabrics] = useState([]);
+  const [selectedFabrics, setSelectedFabrics] = useState([]);
   const [subCategories, setSubCategories] = useState();
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
@@ -58,12 +67,29 @@ const ProductListBy = () => {
       try {
         const response = await axios.get(API_SUBCATEGORIES_URL);
         setSubCategories(response.data.getAllSubCategories);
-        console.log(response.data.getAllSubCategories);
       } catch (err) {
         console.error("Error fetching categories:", err);
       }
     };
+    const fetchFabrics = async () => {
+      try {
+        const response = await axios.get(API_FABRICS_URL);
+        setFabrics(response.data.fabrics || []);
+      } catch (error) {
+        console.error("Error fetching fabrics:", error);
+      }
+    };
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(API_CATEGORIES_URL);
+        setCategories(response.data.getAllCategories || []);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
 
+    fetchCategories();
+    fetchFabrics();
     fetchSubCategories();
   }, []);
 
@@ -75,14 +101,32 @@ const ProductListBy = () => {
     }));
   };
 
+  const handleCategoryFilterChange = (id, isChecked) => {
+    setSelectedCategories(prev =>
+      isChecked ? [...prev, id] : prev.filter(c => c !== id)
+    );
+  };
+
   const handleSubCategoryFilterChange = (id, isChecked) => {
     setSelectedSubCategories(prev =>
       isChecked ? [...prev, id] : prev.filter(sc => sc !== id)
     );
   };
 
+  const handleColorFilterChange = (parentColor, isChecked) => {
+    setSelectedColors(prev =>
+      isChecked ? [...prev, parentColor] : prev.filter(c => c !== parentColor)
+    );
+  };
+
   const handleSizeFilterChange = (id, isChecked) => {
     setSelectedSizes(prev =>
+      isChecked ? [...prev, id] : prev.filter(s => s !== id)
+    );
+  };
+
+  const handleSleeveFilterChange = (id, isChecked) => {
+    setSelectedSleeves(prev =>
       isChecked ? [...prev, id] : prev.filter(s => s !== id)
     );
   };
@@ -102,6 +146,12 @@ const ProductListBy = () => {
   // Pagination logic
   const applyFilters = () => {
     let filtered = [...products];
+
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedCategories.includes(product.category_id._id)
+      );
+    }
 
     if (selectedSubCategories.length > 0) {
       filtered = filtered.filter(product =>
@@ -143,6 +193,30 @@ const ProductListBy = () => {
       });
     }
 
+    if (selectedColors.length > 0) {
+      filtered = filtered.filter(product =>
+        product.variations.some(variation =>
+          selectedColors.some(selectedParentColor =>
+            colorGroups[selectedParentColor]?.includes(variation.color)
+          )
+        )
+      );
+    }
+
+    if (selectedSleeves.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedSleeves.includes(product.sleeve)
+      );
+    }
+
+
+    if (selectedFabrics.length > 0) {
+      filtered = filtered.filter(product =>
+        selectedFabrics.includes(product.fabric)
+      );
+    }
+
+
     return filtered;
   };
 
@@ -173,7 +247,7 @@ const ProductListBy = () => {
         </div>
 
         {/* Heading */}
-        <h2 className="text-center text-2xl font-bold mb-6">
+        <h2 className="text-center text-2xl font-bold text-green-900 mb-6">
           {categoryId ? categoryName : `Products for ${brandName}`}
         </h2>
 
@@ -197,6 +271,16 @@ const ProductListBy = () => {
               onSubCategoryChange={handleSubCategoryFilterChange}
               subCategories={subCategories}
               onSizeChange={handleSizeFilterChange}
+              onColorChange={handleColorFilterChange}
+              categories={categories}
+              onCategoryChange={handleCategoryFilterChange}
+              fabrics={fabrics}
+              onSleeveChange={handleSleeveFilterChange}
+              onFabricChange={(id, isChecked) =>
+                setSelectedFabrics(prev =>
+                  isChecked ? [...prev, id] : prev.filter(f => f !== id)
+                )
+              }
             />
 
           </div>
@@ -206,55 +290,59 @@ const ProductListBy = () => {
             {currentProducts.length === 0 ? (
               <>
                 <NoResults />
-                <p className="text-center text-gray-500">No products available.</p>
+                <p className="text-center text-green-600">No products available.</p>
               </>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {currentProducts.map((product) => (
                   <Link
-                    to={`/product/${product._id}`}
                     key={product._id}
+                    to={`/product/${product._id}`}
                     state={{ product }}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:scale-[1.02]"
+                    className="transform transition-transform hover:scale-[1.03]"
                   >
-                    <img
-                      className="w-full h-[250px] object-cover object-center"
-                      src={selectedImages[product._id]}
-                      alt={product.name}
-                    />
+                    <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
 
-                    <div className="p-4">
-                      <h3 className="font-semibold text-lg">{product.name}</h3>
+                      {/* Product Image */}
+                      <div
+                        className="w-full h-[250px] bg-center bg-cover"
+                        style={{ backgroundImage: `url(${selectedImages[product._id]})` }}
+                      ></div>
 
-                      <p className="text-gray-700 mt-1">
-                        <span className="line-through mr-2 text-sm">₹{product.basePrice}</span>
-                        <span className="font-bold text-green-600 text-md">
-                          ₹{product.variations[0].sizes[0].price}
-                        </span>
-                        <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
-                          -{product.variations[0].sizes[0].discount}%
-                        </span>
-                      </p>
+                      {/* Product Info */}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
 
-                      {/* Variations */}
-                      <div className="mt-2 flex gap-2">
-                        {product.variations.map((variation, index) => {
-                          const isSelected = selectedImages[product._id] === variation.images[0];
-                          return (
-                            <img
-                              key={index}
-                              src={variation.images[0]}
-                              alt={`${product.name} - Variation ${index + 1}`}
-                              className={`w-8 h-8 rounded-full cursor-pointer border-2 ${isSelected ? "border-black" : "border-transparent"
-                                }`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleVariationChange(product._id, variation.images[0]);
-                              }}
-                            />
-                          );
-                        })}
+                        <p className="text-sm text-gray-700 mb-2">
+                          <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
+                          <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
+                          <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
+                            -{product.variations[0].sizes[0].discount}%
+                          </span>
+                        </p>
+
+                        {/* Variations */}
+                        <div className="mt-2 flex gap-2">
+                          {product.variations.map((variation, index) => {
+                            const isSelected = selectedImages[product._id] === variation.images[0];
+                            return (
+                              <img
+                                key={index}
+                                src={variation.images[0]}
+                                alt={`${product.name} - Variation ${index + 1}`}
+                                className="w-8 h-8 rounded-full cursor-pointer border-2"
+                                style={{
+                                  borderColor: isSelected ? "#003e25" : "transparent",
+                                }}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleVariationChange(product._id, variation.images[0]);
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -273,6 +361,7 @@ const ProductListBy = () => {
               </div>
             )}
           </div>
+
         </div>
       </div>
 
@@ -304,6 +393,16 @@ const ProductListBy = () => {
             onSubCategoryChange={handleSubCategoryFilterChange}
             subCategories={subCategories}
             onSizeChange={handleSizeFilterChange}
+            onColorChange={handleColorFilterChange}
+            categories={categories}
+            onCategoryChange={handleCategoryFilterChange}
+            fabrics={fabrics}
+            onSleeveChange={handleSleeveFilterChange}
+            onFabricChange={(id, isChecked) =>
+              setSelectedFabrics(prev =>
+                isChecked ? [...prev, id] : prev.filter(f => f !== id)
+              )
+            }
           />
         </div>
       </div>

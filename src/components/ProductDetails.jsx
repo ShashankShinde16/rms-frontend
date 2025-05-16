@@ -7,8 +7,32 @@ import Cookies from "js-cookie";
 import Footer from "./Footer";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
-const API_URL = `http://localhost:3000/api/v1/wishlist/`;
+
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/wishlist/`;
+
+const sizeChart = {
+  "M-38": { chest: "40 inch", length: "29.5 inch", shoulder: "17.5 inch" },
+  "L-40": { chest: "42 inch", length: "30 inch", shoulder: "18 inch" },
+  "2XL-44": { chest: "46 inch", length: "31 inch", shoulder: "19 inch" },
+  "3XL-46": { chest: "48 inch", length: "31.5 inch", shoulder: "19.5 inch" },
+  "4XL-48": { chest: "50 inch", length: "32 inch", shoulder: "20 inch" },
+  "5XL-50": { chest: "52 inch", length: "32.5 inch", shoulder: "20.5 inch" },
+  "6XL-52": { chest: "54 inch", length: "33 inch", shoulder: "21 inch" },
+};
+
+// const sizeChart = {
+//   "M": { chest: "40 inch", length: "29.5 inch", shoulder: "17.5 inch" },
+//   "L": { chest: "42 inch", length: "30 inch", shoulder: "18 inch" },
+//   "XXL-44": { chest: "46 inch", length: "31 inch", shoulder: "19 inch" },
+//   "S": { chest: "48 inch", length: "31.5 inch", shoulder: "19.5 inch" },
+//   "XS": { chest: "50 inch", length: "32 inch", shoulder: "20 inch" },
+//   "XL": { chest: "52 inch", length: "32.5 inch", shoulder: "20.5 inch" },
+//   "6XL-52": { chest: "54 inch", length: "33 inch", shoulder: "21 inch" },
+// };
+
 
 const ProductDetails = () => {
   const location = useLocation();
@@ -23,6 +47,7 @@ const ProductDetails = () => {
     return null;
   }
 
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(product.variations[0].images[0]);
   const [selectedVariation, setSelectedVariation] = useState(product.variations[0]);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -89,6 +114,10 @@ const ProductDetails = () => {
   const handleSizeClick = (size) => {
     setSelectedSize(size);
     setQuantity(1);
+  };
+
+  const handleMainImageClick = () => {
+    setIsZoomOpen(true);
   };
 
   const handleVariationChange = (variation) => {
@@ -162,12 +191,18 @@ const ProductDetails = () => {
     <>
       <Navbar />
       <div className="flex justify-center py-10 bg-gray-100 mt-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-10 w-full max-w-7xl bg-white p-4 sm:p-6 rounded-xl shadow-md">
+        <div className="flex flex-col lg:flex-row gap-10 w-full max-w-7xl  p-4 sm:p-6 shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
 
           {/* Image Section */}
           <div className="flex flex-col gap-5 lg:w-1/3 w-full">
             <div className="w-full rounded-lg overflow-hidden border">
-              <img src={currentImage} alt={product.name} className="w-full object-cover" />
+              <Zoom>
+                <img
+                  src={currentImage}
+                  alt={product.name}
+                  className="w-full object-cover cursor-zoom-in rounded-lg"
+                />
+              </Zoom>
             </div>
 
             <div className="flex items-center justify-center gap-2 flex-wrap sm:flex-nowrap">
@@ -219,7 +254,7 @@ const ProductDetails = () => {
 
             {/* Colors */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">Select Color</h3>
+              <h3 className="text-lg font-semibold mb-2 text-gray-800">Color : {selectedVariation.color}</h3>
               <div className="flex gap-2 flex-wrap">
                 {product.variations.map((variation, index) => (
                   <img
@@ -241,7 +276,7 @@ const ProductDetails = () => {
                 {sizes.map((size) => (
                   <button
                     key={size}
-                    className={`w-10 h-10 text-sm sm:text-base rounded-full border border-gray-300 font-semibold ${selectedSize === size ? "bg-green-600 text-white" : "bg-white"
+                    className={`w-16 h-16 cursor-pointer text-sm sm:text-base rounded-full border border-gray-300 font-semibold ${selectedSize === size ? "bg-green-600 text-white" : "bg-white"
                       } hover:bg-green-100`}
                     onClick={() => handleSizeClick(size)}
                   >
@@ -251,20 +286,29 @@ const ProductDetails = () => {
               </div>
             </div>
 
+            {selectedSize && sizeChart[selectedSize] && (
+              <div className="mt-2 text-sm text-gray-700 bg-gray-100 px-3 py-2 rounded-md inline-block">
+                <span className="mr-4">Chest: {sizeChart[selectedSize].chest}</span>
+                <span className="mr-4">Length: {sizeChart[selectedSize].length}</span>
+                <span>Shoulder: {sizeChart[selectedSize].shoulder}</span>
+              </div>
+            )}
+
+
             {/* Quantity */}
             <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
               <h3 className="text-lg font-semibold text-gray-800">Quantity</h3>
-              <button className="px-3 py-2 bg-gray-300 rounded-lg" onClick={handleDecrement}>
+              <button className="px-3 cursor-pointer py-2 bg-gray-300 rounded-lg" onClick={handleDecrement}>
                 -
               </button>
               <span className="text-lg">{quantity}</span>
-              <button className="px-3 py-2 bg-gray-300 rounded-lg" onClick={handleIncrement}>
+              <button className="px-3 py-2 cursor-pointer bg-gray-300 rounded-lg" onClick={handleIncrement}>
                 +
               </button>
             </div>
 
             {/* Pin Code */}
-            <div>
+            {/* <div>
               <h3 className="text-lg font-semibold text-gray-800">Enter Pin Code</h3>
               <input
                 type="text"
@@ -273,18 +317,18 @@ const ProductDetails = () => {
                 onChange={(e) => setPinCode(e.target.value)}
                 placeholder="Enter your pin code"
               />
-            </div>
+            </div> */}
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <button className="w-full py-3 bg-green-600 text-white rounded-lg" onClick={handleAddToCart}>
+              <button className="w-full py-3 cursor-pointer bg-green-600 text-white rounded-lg" onClick={handleAddToCart}>
                 Add to Bag
               </button>
               <button
-                className="w-full py-3 bg-red-600 text-white rounded-lg"
+                className="w-full py-3 cursor-pointer bg-green-200 text-green-600 rounded-lg"
                 onClick={() => addToWishlist(product._id, toast)}
               >
-                ❤️ Add to Wishlist
+                Add to Wishlist
               </button>
             </div>
 

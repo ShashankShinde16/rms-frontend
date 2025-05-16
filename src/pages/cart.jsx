@@ -4,9 +4,10 @@ import { useCart } from "../context/CartContext";
 import Navbar from "../components/Navbar"; // Import Navbar
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const API_URL = `http://localhost:3000/api/v1/users/`;
-const API_COUPON_URL = `http://localhost:3000/api/v1/coupons/apply/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/users/`;
+const API_COUPON_URL = `${import.meta.env.VITE_API_BASE_URL}/coupons/apply/`;
 
 const Cart = () => {
   const { cart, cartItem, removeFromCart, updateQuantity, fetchCart } = useCart();
@@ -21,6 +22,7 @@ const Cart = () => {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [isCouponApplied, setIsCouponApplied] = useState(false);
   const [AmountToPay, setAmountToPay] = useState(cart.totalPriceAfterDiscount);
+  const navigate = useNavigate();
 
   const user_token = Cookies.get("user_token");
   const shippingCost = cartItem.length > 0 ? 0 : 0; // Example shipping cost, you can change it as needed
@@ -102,10 +104,13 @@ const Cart = () => {
       );
 
       if (data.valid) {
-        console.log(data, "coupon applied");
         setCouponDiscount(data.discountAmount); // assuming backend returns `discountAmount`
         setAmountToPay(data.discountAmount);
         setIsCouponApplied(true);
+        localStorage.setItem("appliedCoupon", JSON.stringify({
+          discountAmount: data.discountAmount,
+          couponCode: couponCode,
+        }));
         toast.success(`Coupon applied! You saved ₹${data.discountAmount}`);
       } else {
         setCouponDiscount(0);
@@ -136,7 +141,6 @@ const Cart = () => {
             city: address.city,
             phone: address.phone,
           });
-          console.log(address, "user");
         }
 
       } catch (error) {
@@ -149,6 +153,26 @@ const Cart = () => {
     }
   }, [user_token]);
 
+  useEffect(() => {
+    const appliedCoupon = localStorage.getItem("appliedCoupon");
+    if (appliedCoupon) {
+      const { discountAmount, couponCode } = JSON.parse(appliedCoupon);
+      setCouponDiscount(discountAmount);
+      setCouponCode(couponCode);
+      setIsCouponApplied(true);
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   // Remove appliedCoupon when cart items change (add/remove/update)
+  //   if (isCouponApplied) {
+  //     localStorage.removeItem("appliedCoupon");
+  //     setCouponDiscount(0);
+  //     setCouponCode("");
+  //     setIsCouponApplied(false);
+  //   }
+  // }, [cartItem]);
+
 
   const handlePlaceOrder = async (id) => {
     const res = await loadRazorpayScript();
@@ -160,7 +184,7 @@ const Cart = () => {
     try {
       // 1. Create Razorpay Order on backend
       const { data } = await axios.post(
-        `http://localhost:3000/api/v1/orders/checkOut/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/orders/checkOut/${id}`,
         {
           shippingAddress: {
             street: shippingAddress.street,
@@ -191,7 +215,7 @@ const Cart = () => {
           // 2. Verify payment and create order
           try {
             const verifyRes = await axios.post(
-              "http://localhost:3000/api/v1/orders/verify",
+              `${import.meta.env.VITE_API_BASE_URL}/orders/verify`,
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -212,7 +236,9 @@ const Cart = () => {
 
             if (verifyRes.data.message === "success") {
               toast.success("Order placed successfully!");
+              localStorage.removeItem("appliedCoupon");
               fetchCart();
+              navigate("/order");
             } else {
               toast.error("Payment verification failed");
             }
@@ -260,7 +286,7 @@ const Cart = () => {
                 : null;
 
               return (
-                <div key={index} className="flex flex-col sm:flex-row items-center border border-gray-300 rounded-lg mb-5 p-4 shadow-sm hover:shadow-md">
+                <div key={index} className="flex flex-col sm:flex-row items-center rounded-lg mb-5 p-4 shadow-sm overflow-hidden bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
 
                   {/* Product Image */}
                   <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="w-24 h-24 object-cover rounded-lg mb-4 sm:mb-0 sm:mr-4" />
@@ -280,21 +306,21 @@ const Cart = () => {
                   {/* Quantity and Remove */}
                   <div className="flex items-center space-x-3">
                     {/* Delete Icon */}
-                    <button onClick={() => handleRemove(item._id)} className="text-gray-500 hover:text-red-600">
+                    <button onClick={() => handleRemove(item._id)} className="cursor-pointer text-gray-500 hover:text-red-600">
                       🗑
                     </button>
 
                     {/* Quantity Buttons */}
                     <div className="flex items-center border border-gray-400 rounded-md px-2">
                       <button
-                        className="px-2 text-lg"
+                        className="px-2 text-lg cursor-pointer"
                         onClick={() => updateQuantity(item.productId._id, Math.max(1, item.quantity - 1))}
                       >
                         -
                       </button>
                       <span className="px-3">{item.quantity}</span>
                       <button
-                        className="px-2 text-lg"
+                        className="px-2 text-lg cursor-pointer"
                         onClick={() => updateQuantity(item.productId._id, Math.min(selectedSize?.stock, item.quantity + 1))}
                       >
                         +
@@ -316,7 +342,7 @@ const Cart = () => {
         </div>
 
         {/* Right Section: Price Summary */}
-        <div className="w-full lg:w-1/3 border border-gray-300 rounded-lg p-5 shadow-sm">
+        <div className="w-full lg:w-1/3 rounded-lg p-5 shadow-sm overflow-hidden bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
           <h3 className="text-xl font-semibold mb-5">PRICE DETAILS</h3>
           <p className="flex justify-between mb-2">
             <span>Price ({cartItem.length} items)</span>

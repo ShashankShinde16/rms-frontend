@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_URL = `http://localhost:3000/api/v1/auth/signin/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth/signin/`;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -32,7 +32,6 @@ export default function Login() {
         Cookies.set("user_details", JSON.stringify(res.data.user));
         Cookies.set("user_token", res.data.token);
         if (res.data.user.role) {
-          console.log(res.data);
           navigate("/");
         } else {
           navigate("/login");
@@ -40,7 +39,6 @@ export default function Login() {
       })
       .catch((err) => {
         setIsLogin(false);
-        console.log(err.response.data.mssg);
         toast.error(err.response.data.mssg);
       });
   };

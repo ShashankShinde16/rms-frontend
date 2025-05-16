@@ -3,193 +3,203 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = `http://localhost:3000/api/v1/auth/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth/`;
+
+const InputField = ({ label, type, value, onChange }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700">{label}</label>
+    <div className="mt-1">
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        required
+        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      />
+    </div>
+  </div>
+);
 
 const SignUp = () => {
-    const [step, setStep] = useState(1);
-    const [email, setEmail] = useState("");
-    const [otp, setOtp] = useState("");
-    const [password, setPassword] = useState("");
-    const [userDetails, setUserDetails] = useState({
-        name: "",
-        phone: "",
-        city: "",
-        street: "",
-    });
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [userDetails, setUserDetails] = useState({
+    name: "",
+    phone: "",
+    city: "",
+    street: "",
+  });
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleSendOtp = async () => {
-        console.log("Sending OTP to:", email);
-        try {
-            await axios.post(`${API_URL}send-otp`, { email, purpose: "signup" });
-            toast.success("OTP sent to email!");
-            setStep(2);
-        } catch (err) {
-            toast.error(err.response?.data?.mssg || "Failed to send OTP");
-        }
-    };
+  const handleSendOtp = async () => {
+    try {
+      await axios.post(`${API_URL}send-otp`, {
+        email,
+        phone: userDetails.phone,
+        purpose: "signup",
+      });
+      toast.success("OTP sent to email and phone!");
+      setStep(2);
+    } catch (err) {
+      toast.error(err.response?.data?.mssg || "Failed to send OTP");
+    }
+  };
 
-    const handleVerifyOtp = async () => {
-        try {
-            await axios.post(`${API_URL}verify-otp`, { email, otp });
-            toast.success("OTP verified!");
-            setStep(3);
-        } catch (err) {
-            toast.error(err.response?.data?.mssg || "Invalid OTP");
-        }
-    };
+  const handleVerifyOtp = async () => {
+    try {
+      await axios.post(`${API_URL}verify-otp`, { email, otp });
+      toast.success("OTP verified!");
+      setStep(3);
+    } catch (err) {
+      toast.error(err.response?.data?.mssg || "Invalid OTP");
+    }
+  };
 
-    const handleSignup = async () => {
-        try {
-            await axios.post(`${API_URL}signup`, {
-                email,
-                password,
-                name: userDetails.name,
-                addresses: [
-                    {
-                        phone: userDetails.phone,
-                        city: userDetails.city,
-                        street: userDetails.street,
-                    },
-                ],
-            });
-            toast.success("Account created successfully!");
-            navigate("/login");
-        } catch (err) {
-            toast.error(err.response?.data?.mssg || "Signup failed");
-        }
-    };
+  const handleSignup = async () => {
+    try {
+      await axios.post(`${API_URL}signup`, {
+        email,
+        password,
+        name: userDetails.name,
+        addresses: [
+          {
+            phone: userDetails.phone,
+            city: userDetails.city,
+            street: userDetails.street,
+          },
+        ],
+      });
+      toast.success("Account created successfully!");
+      navigate("/login");
+    } catch (err) {
+      toast.error(err.response?.data?.mssg || "Signup failed");
+    }
+  };
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-            <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-                <div className="text-center mb-6">
-                    <img
-                        src="/images/Login-Logo.png"
-                        alt="logo"
-                        className="h-14 mx-auto mb-4"
-                    />
-                    <h1 className="text-2xl font-semibold">Create your account</h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        {step === 1 && "Enter your email to get started"}
-                        {step === 2 && "Verify the OTP sent to your email"}
-                        {step === 3 && "Set your password and fill in your details"}
-                    </p>
-                </div>
+  return (
+    <>
+      <div className="h-full bg-gray-50">
+        <div className="h-full min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+          <div className="sm:mx-auto sm:w-full sm:max-w-md">
+            <img
+              className="mx-auto h-20 w-auto"
+              src="/images/Login-Logo.png"
+              alt="rms-ecommerce"
+            />
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Create your account
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              {step === 1 && "Enter your email to get started"}
+              {step === 2 && "Verify the OTP sent to your email"}
+              {step === 3 && "Set your password and details"}
+            </p>
+          </div>
 
-                {/* Step 1 - Email */}
-                {step === 1 && (
-                    <>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                            onClick={handleSendOtp}
-                            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-                        >
-                            Next
-                        </button>
-                    </>
-                )}
+          <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 space-y-6">
+              {step === 1 && (
+                <>
+                  <InputField
+                    label="Email address"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <InputField
+                    label="Phone Number"
+                    type="text"
+                    value={userDetails.phone}
+                    onChange={(e) =>
+                      setUserDetails({ ...userDetails, phone: e.target.value })
+                    }
+                  />
+                  <button
+                    onClick={handleSendOtp}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Next
+                  </button>
+                </>
+              )}
 
-                {/* Step 2 - OTP */}
-                {step === 2 && (
-                    <>
-                        <input
-                            type="text"
-                            placeholder="Enter OTP"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        />
-                        <button
-                            onClick={handleVerifyOtp}
-                            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-                        >
-                            Verify
-                        </button>
-                    </>
-                )}
+              {step === 2 && (
+                <>
+                  <InputField
+                    label="Enter OTP"
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                  />
+                  <button
+                    onClick={handleVerifyOtp}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Verify OTP
+                  </button>
+                </>
+              )}
 
-                {/* Step 3 - Details */}
-                {step === 3 && (
-                    <>
-                        <input
-                            type="password"
-                            placeholder="Create Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
+              {step === 3 && (
+                <>
+                  <InputField
+                    label="Full Name"
+                    type="text"
+                    value={userDetails.name}
+                    onChange={(e) =>
+                      setUserDetails({ ...userDetails, name: e.target.value })
+                    }
+                  />
+                  <InputField
+                    label="City"
+                    type="text"
+                    value={userDetails.city}
+                    onChange={(e) =>
+                      setUserDetails({ ...userDetails, city: e.target.value })
+                    }
+                  />
+                  <InputField
+                    label="Street"
+                    type="text"
+                    value={userDetails.street}
+                    onChange={(e) =>
+                      setUserDetails({ ...userDetails, street: e.target.value })
+                    }
+                  />
+                  <InputField
+                    label="Create Password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    onClick={handleSignup}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Create Account
+                  </button>
+                </>
+              )}
 
-                        <input
-                            type="text"
-                            placeholder="Full Name"
-                            value={userDetails.name}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, name: e.target.value })
-                            }
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Phone Number"
-                            value={userDetails.phone}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, phone: e.target.value })
-                            }
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="City"
-                            value={userDetails.city}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, city: e.target.value })
-                            }
-                            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Street"
-                            value={userDetails.street}
-                            onChange={(e) =>
-                                setUserDetails({ ...userDetails, street: e.target.value })
-                            }
-                            className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-
-                        <button
-                            onClick={handleSignup}
-                            className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
-                        >
-                            Create Account
-                        </button>
-                    </>
-                )}
-
-                <p className="mt-6 text-sm text-center text-gray-500">
-                    Already have an account?{" "}
-                    <span
-                        className="text-blue-600 hover:underline cursor-pointer"
-                        onClick={() => navigate("/login")}
-                    >
-                        Sign in
-                    </span>
-                </p>
-
-                <Toaster />
+              <div className="text-center mt-4">
+                <span className="text-sm text-gray-600">Already have an account? </span>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-indigo-600 hover:underline text-sm font-medium"
+                >
+                  Sign in
+                </button>
+              </div>
             </div>
+          </div>
         </div>
-    );
+        <Toaster />
+      </div>
+    </>
+  );
 };
 
 export default SignUp;

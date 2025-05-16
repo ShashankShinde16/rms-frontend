@@ -20,6 +20,7 @@ import About from "./pages/About";
 import SearchResults from "./pages/SearchResults";
 import Wishlist from "./pages/wishlist";
 import ResetPassword from "./pages/resetPasssword";
+import Coupon from "./pages/coupon";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/coupon" element={<Coupon />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<h1>Contact</h1>} />
           <Route path="/order" element={<ProtectedRoute><Order /></ProtectedRoute>} />

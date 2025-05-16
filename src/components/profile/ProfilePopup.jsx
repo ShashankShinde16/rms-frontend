@@ -1,16 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaTimes, FaEdit, FaCheck, FaArrowLeft } from "react-icons/fa";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_URL = `http://localhost:3000/api/v1/users/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 const ProfilePopup = ({ me, onClose, fetchUser }) => {
   const user = me;
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({ ...user });
   const [loading, setLoading] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [phone, setPhone] = useState(formData.addresses[0].phone);
+  const [otp, setOtp] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  const sendOtp = async () => {
+    if (!phone) return toast.error("Please enter a phone number");
+
+    try {
+      await axios.post(`${API_URL}/auth/send-otp`, {
+        email: me.email,  // Assuming user email is in `me`
+        phone,
+        purpose: "verify-phone",
+      });
+
+      toast.success("OTP sent successfully");
+      setIsOtpSent(true);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to send OTP");
+    }
+  };
+
+  const verifyOtp = async () => {
+    if (!otp) return toast.error("Enter OTP to verify");
+
+    setIsVerifying(true);
+    try {
+      const { data } = await axios.post(`${API_URL}/auth/verify-otp`, {
+        email: me.email,
+        otp,
+      });
+
+      toast.success("Phone verified successfully!");
+      setIsPhoneVerified(true);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "OTP verification failed");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,25 +67,13 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
     setFormData({ ...formData, addresses: updated });
   };
 
-  const addNewAddress = () => {
-    setFormData({
-      ...formData,
-      addresses: [...formData.addresses, { street: "", city: "", phone: "" }]
-    });
-  };
-
-  const removeAddress = (index) => {
-    const updated = formData.addresses.filter((_, i) => i !== index);
-    setFormData({ ...formData, addresses: updated });
-  };
-
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const user_token = Cookies.get("user_token");
 
-      const response = await axios.put(
-        `${API_URL}me`,
+      await axios.put(
+        `${API_URL}/users/me`,
         formData,
         {
           headers: {
@@ -49,11 +81,13 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
           },
         }
       );
-      fetchUser(); // optional: refetch user data
-      // onUpdate(response.data.user); // optional: update parent state
+      fetchUser();
       setTimeout(() => {
         toast.success("Profile updated successfully!");
         setEditMode(false);
+        setIsPhoneVerified(false);
+        setIsOtpSent(false);
+        setOtp("");
       }, 2000);
     } catch (err) {
       console.error("Update failed:", err.response?.data || err.message);
@@ -64,11 +98,11 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
     }
   };
 
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm transition-all">
       <Toaster />
-      <div className="relative w-full max-w-md p-6 sm:p-8 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg ring-1 ring-gray-200 transition-transform animate-fade-in-up">
+      <div className="relative profile-scrollbar w-[90%] sm:w-full max-w-md max-h-[90vh] overflow-y-auto p-6 sm:p-8 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg ring-1 ring-gray-200 transition-transform animate-fade-in-up">
+
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -86,14 +120,14 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
           {editMode ? (
             <button
               onClick={() => setEditMode(false)}
-              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+              className="flex items-center text-sm text-gray-500 hover:text-green-600"
             >
               <FaArrowLeft className="mr-1" /> Back
             </button>
           ) : (
             <button
               onClick={() => setEditMode(true)}
-              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+              className="flex items-center text-sm text-gray-500 hover:text-green-600"
             >
               <FaEdit className="mr-1" /> Edit
             </button>
@@ -105,10 +139,6 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
           <div className="space-y-3 text-sm text-gray-700">
             <p><span className="font-medium">Name:</span> {user.name}</p>
             <p><span className="font-medium">Email:</span> {user.email}</p>
-            {/* <p><span className="font-medium">Role:</span> {user.role}</p>
-            <p><span className="font-medium">Verified:</span> {user.verified ? "Yes" : "No"}</p>
-            <p><span className="font-medium">Active:</span> {user.isActive ? "Yes" : "No"}</p>
-            <p><span className="font-medium">Blocked:</span> {user.blocked ? "Yes" : "No"}</p> */}
 
             <div className="pt-2">
               <p className="font-medium">Addresses:</p>
@@ -123,44 +153,54 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
           <div className="space-y-4 text-sm text-gray-700">
             <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
             <InputField label="Email" name="email" value={formData.email} readOnly onChange={handleChange} />
-            {/* <SelectField
-              label="Role"
-              name="role"
-              value={formData.role}
-              options={["Admin", "user"]}
-              onChange={handleChange}
-            />
-            <CheckboxField label="Verified" name="verified" checked={formData.verified} onChange={handleChange} />
-            <CheckboxField label="Active" name="isActive" checked={formData.isActive} onChange={handleChange} />
-            <CheckboxField label="Blocked" name="blocked" checked={formData.blocked} onChange={handleChange} /> */}
             <InputField
               type="text"
               name="street"
-              label="street"
+              label="Street"
               placeholder="Street"
               value={formData.addresses[0].street}
               onChange={(e) => handleAddressChange("street", e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md"
             />
             <InputField
               type="text"
               name="city"
-              label={"city"}
+              label="City"
               placeholder="City"
               value={formData.addresses[0].city}
               onChange={(e) => handleAddressChange("city", e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md"
             />
-            <div className="flex space-x-2">
+            <div className="space-y-4">
               <InputField
-                type="text"
+                label="Phone Number"
                 name="phone"
-                label={"phone"}
-                placeholder="Phone"
-                value={formData.addresses[0].phone}
-                onChange={(e) => handleAddressChange("phone", e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
+              {!isOtpSent ? (
+                <button
+                  onClick={sendOtp}
+                  disabled={loading}
+                  className="px-5 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
+                >
+                  {loading ? "Sending OTP..." : "Send OTP"}
+                </button>
+              ) : (
+                <>
+                  <InputField
+                    label="Enter OTP"
+                    name="otp"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                  />
+                  <button
+                    onClick={verifyOtp}
+                    disabled={isVerifying}
+                    className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    {isVerifying ? "Verifying..." : "Verify OTP"}
+                  </button>
+                </>
+              )}
             </div>
 
           </div>
@@ -170,9 +210,12 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
         {editMode && (
           <div className="mt-6 flex justify-end">
             <button
-              onClick={() => { handleSubmit() }}
-              disabled={loading}
-              className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              onClick={handleSubmit}
+              disabled={loading || !isPhoneVerified}  // <-- Add check here
+              className={`px-5 py-2 rounded-lg text-white transition ${loading || !isPhoneVerified
+                ? "bg-green-800 cursor-not-allowed"
+                : "bg-green-700 hover:bg-green-800"
+                }`}
             >
               {loading ? "Saving..." : (
                 <span className="flex items-center">
@@ -180,6 +223,7 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
                 </span>
               )}
             </button>
+
           </div>
         )}
       </div>
@@ -196,41 +240,11 @@ const InputField = ({ label, name, value, onChange, readOnly = false }) => (
       value={value}
       onChange={onChange}
       readOnly={readOnly}
-      className={`w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 ${readOnly ? "bg-gray-100 cursor-not-allowed" : "focus:ring-blue-500"
+      className={`w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 ${readOnly
+        ? "bg-gray-100 cursor-not-allowed"
+        : "focus:ring-green-600"
         }`}
     />
-  </div>
-);
-
-
-const SelectField = ({ label, name, value, options, onChange }) => (
-  <div>
-    <label className="block font-medium mb-1">{label}</label>
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-    >
-      {options.map((opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-const CheckboxField = ({ label, name, checked, onChange }) => (
-  <div className="flex items-center space-x-2">
-    <input
-      type="checkbox"
-      name={name}
-      checked={checked}
-      onChange={onChange}
-      className="w-4 h-4 border-gray-300 rounded focus:ring-blue-500"
-    />
-    <label>{label}</label>
   </div>
 );
 

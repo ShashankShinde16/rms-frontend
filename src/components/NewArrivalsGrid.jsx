@@ -7,7 +7,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import { Link } from "react-router-dom";
 
-const API_URL = `http://localhost:3000/api/v1/categories/`;
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/categories/`;
 
 // Custom Arrow Components
 const CustomPrevArrow = (props) => {
