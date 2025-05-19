@@ -118,9 +118,9 @@ const Navbar = () => {
     <nav className="flex items-center justify-between px-5 py-1 bg-[#f7f3f3] fixed top-0 left-0 w-full h-12 z-50 shadow-md">
       {/* Logo and Hamburger */}
       <div className="flex items-center text-xl font-bold">
-        <FaBars className="text-2xl mr-3 cursor-pointer block" onClick={toggleMobileMenu} />
+        <FaBars className="text-2xl mr-3 cursor-pointer block text-[#003e25]" onClick={toggleMobileMenu} />
         <Link to="/">
-          <img src="/images/Logo.png" alt="Logo" className="h-10 w-auto max-w-full" />
+          <img src="/images/web-Logo.png" alt="Logo" className="h-6 w-auto max-w-full" />
         </Link>
       </div>
 
@@ -257,61 +257,62 @@ const Navbar = () => {
 
 
       {/* Mobile Menu */}
-      <div ref={mobileMenuRef} className={`fixed top-0 left-0 h-full w-3/4 bg-white shadow-lg z-40 transform ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300`}>
-        <nav className="flex flex-col p-6 space-y-4">
-          <Link to="/">Home</Link>
-          <Link to="/shop">Shop</Link>
-          <Link to="/coupon">Coupon</Link>
-          <Link to="/order">Order</Link>
-          <Link to="/about">About</Link>
-        </nav>
+      < div
+        ref={mobileMenuRef}
+        className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}
+      >
+      <Link to="/">Home</Link>
+      <Link to="/shop">Shop</Link>
+      <Link to="/coupon">Coupon</Link>
+      <Link to="/order">Order</Link>
+      <Link to="/about">About</Link>
+    </div >
+
+      {/* Cart Drawer */ }
+  <div ref={cartRef} className={`cart-slider ${cartOpen ? "open" : ""}`}>
+    <h2>My Cart</h2>
+    {cartItemCount === 0 ? (
+      <p>No items in the cart yet!</p>
+    ) : (
+      <div className="cart-items">
+        {cart.cartItem.map((item) => {
+          const matchingVariation = item.productId.variations.find((variation) =>
+            variation.sizes.some((size) => size._id === item.variationId)
+          );
+          const selectedSize = matchingVariation?.sizes.find((size) => size._id === item.variationId) || null;
+
+          return (
+            <div key={item._id} className="cart-item">
+              <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="cart-item-image" />
+              <div className="cart-item-details">
+                <h3>{item.productId.name}</h3>
+                <p>Size: {selectedSize?.size || "N/A"}</p>
+                <p>Price: ₹{selectedSize?.price || item.price}</p>
+                <select
+                  value={item.quantity}
+                  onChange={(e) => updateQuantity(item.productId._id, parseInt(e.target.value))}
+                  className="p-2 border rounded-md w-16 text-sm"
+                >
+                  {[...Array(selectedSize?.stock).keys()].map((num) => (
+                    <option key={num + 1} value={num + 1}>
+                      {num + 1}
+                    </option>
+                  ))}
+                </select>
+                <button className="remove-from-cart-btn" onClick={() => handleRemove(item._id)}>Remove</button>
+              </div>
+            </div>
+          );
+        })}
       </div>
+    )}
+    <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md mt-5" onClick={() => navigate("/cart")}>
+      View Cart
+    </button>
+  </div>
 
-      {/* Cart Drawer */}
-      <div ref={cartRef} className={`cart-slider ${cartOpen ? "open" : ""}`}>
-        <h2>My Cart</h2>
-        {cartItemCount === 0 ? (
-          <p>No items in the cart yet!</p>
-        ) : (
-          <div className="cart-items">
-            {cart.cartItem.map((item) => {
-              const matchingVariation = item.productId.variations.find((variation) =>
-                variation.sizes.some((size) => size._id === item.variationId)
-              );
-              const selectedSize = matchingVariation?.sizes.find((size) => size._id === item.variationId) || null;
-
-              return (
-                <div key={item._id} className="cart-item">
-                  <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="cart-item-image" />
-                  <div className="cart-item-details">
-                    <h3>{item.productId.name}</h3>
-                    <p>Size: {selectedSize?.size || "N/A"}</p>
-                    <p>Price: ₹{selectedSize?.price || item.price}</p>
-                    <select
-                      value={item.quantity}
-                      onChange={(e) => updateQuantity(item.productId._id, parseInt(e.target.value))}
-                      className="p-2 border rounded-md w-16 text-sm"
-                    >
-                      {[...Array(selectedSize?.stock).keys()].map((num) => (
-                        <option key={num + 1} value={num + 1}>
-                          {num + 1}
-                        </option>
-                      ))}
-                    </select>
-                    <button className="remove-from-cart-btn" onClick={() => handleRemove(item._id)}>Remove</button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-        <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md mt-5" onClick={() => navigate("/cart")}>
-          View Cart
-        </button>
-      </div>
-
-      {showProfilePopup && <ProfilePopup me={user} onClose={() => setShowProfilePopup(false)} fetchUser={fetchUser} />}
-    </nav>
+  { showProfilePopup && <ProfilePopup me={user} onClose={() => setShowProfilePopup(false)} fetchUser={fetchUser} /> }
+    </nav >
   );
 };
 

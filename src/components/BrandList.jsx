@@ -49,7 +49,7 @@ const BrandList = () => {
 
     return (
         <div className="p-6 mt-8">
-            <h2 className="text-2xl font-bold text-center mb-6">Our Brands</h2>
+            <h2 className="text-2xl font-bold text-center mb-6 text-[#003e25]">Our Brands</h2>
 
             {/* {loading && <p className="text-center">Loading...</p>}
             {error && <p className="text-center text-red-500">{error}</p>} */}

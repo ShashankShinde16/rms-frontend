@@ -50,7 +50,7 @@ export default function Login() {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <img
                 className="mx-auto h-20 w-auto"
-                src="/images/Login-Logo.png"
+                src="/images/web-Login-Logo.png"
                 alt="rms-ecommerce"
               />
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -107,7 +107,7 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => navigate("/reset-password")}
-                      className="text-sm text-indigo-600 hover:underline"
+                      className="text-sm cursor-pointer text-indigo-600 hover:underline"
                     >
                       Forgot password?
                     </button>
@@ -115,7 +115,7 @@ export default function Login() {
 
                   <div>
                     {isLogin ? (
-                      <button className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                      <button className="w-full flex justify-center cursor-pointer py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <>
                           <div role="status">
                             <svg aria-hidden="true" className="w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-[blue]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -129,7 +129,7 @@ export default function Login() {
                     ) : (
                       <button
                         onClick={(e) => handleSubmit(e)}
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="w-full flex justify-center cursor-pointer py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         Sign in
                       </button>
@@ -139,7 +139,7 @@ export default function Login() {
                     <span className="text-sm text-gray-600">Don't have an account? </span>
                     <button
                       onClick={() => navigate("/signup")}
-                      className="text-indigo-600 hover:underline text-sm font-medium"
+                      className="text-indigo-600 hover:underline cursor-pointer text-sm font-medium"
                     >
                       Sign up here
                     </button>

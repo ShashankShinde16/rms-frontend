@@ -70,7 +70,7 @@ const ResetPassword = () => {
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <img
                         className="mx-auto h-20 w-auto"
-                        src="/images/Login-Logo.png"
+                        src="/images/web-Login-Logo.png"
                         alt="rms-ecommerce"
                     />
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -102,7 +102,7 @@ const ResetPassword = () => {
                                     <button
                                         type="button"
                                         onClick={handleSendOtp}
-                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        className="w-full flex justify-center cursor-pointer py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
                                         Send OTP
                                     </button>
@@ -119,7 +119,7 @@ const ResetPassword = () => {
                                     <button
                                         type="button"
                                         onClick={handleVerifyOtp}
-                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        className="w-full flex justify-center cursor-pointer py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
                                         Verify OTP
                                     </button>
@@ -137,7 +137,7 @@ const ResetPassword = () => {
                                     <button
                                         type="button"
                                         onClick={handleResetPassword}
-                                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        className="w-full flex justify-center cursor-pointer py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
                                         Reset Password
                                     </button>
@@ -149,7 +149,7 @@ const ResetPassword = () => {
                                 <button
                                     type="button"
                                     onClick={() => navigate("/login")}
-                                    className="text-indigo-600 hover:underline text-sm font-medium"
+                                    className="text-indigo-600 cursor-pointer hover:underline text-sm font-medium"
                                 >
                                     Sign in
                                 </button>

@@ -7,7 +7,7 @@ const API_URL = `${import.meta.env.VITE_API_BASE_URL}/categories/`;
 const CategoryGrid = () => {
   const [categories, setCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const CategoriesPerPage = 5;
+  const CategoriesPerPage = 4;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -54,7 +54,7 @@ const CategoryGrid = () => {
         Explore Categories
       </h2>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 w-full mb-6">
         {visibleCategories.map((category) => (
           <Link
             to={`/category/${category.name}`}
@@ -69,7 +69,7 @@ const CategoryGrid = () => {
             <img
               src={category.Image}
               alt={category.name}
-              className="w-full h-44 md:h-56 lg:h-64 object-cover"
+              className="w-full h-44 md:h-56 lg:h-96 object-cover"
             />
             <div className="p-3 text-center font-semibold text-green-900 group-hover:text-green-700 transition">
               {category.name}

@@ -17,7 +17,7 @@ const ProductList = ({ categoryId }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 8;
     const user_token = Cookies.get("user_token");
-    const [selectedImages, setSelectedImages] = useState({}); // Track selected images
+    const [selectedVariations, setSelectedVariations] = useState({});
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -30,14 +30,14 @@ const ProductList = ({ categoryId }) => {
                 const productsData = response.data.products;
                 setProducts(productsData);
 
-                // Set default images for each product based on the first variation
-                const defaultImages = {};
-                productsData.forEach((product) => {
-                    if (product.variations.length > 0 && product.variations[0].images.length > 0) {
-                        defaultImages[product._id] = product.variations[0].images[0];
-                    }
-                });
-                setSelectedImages(defaultImages);
+                const defaultVariations = {};
+productsData.forEach((product) => {
+  if (product.variations.length > 0) {
+    defaultVariations[product._id] = product.variations[0];
+  }
+});
+setSelectedVariations(defaultVariations);
+
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
@@ -46,13 +46,12 @@ const ProductList = ({ categoryId }) => {
         fetchProducts();
     }, [brandName]);
 
-    // Handle image change on variation selection
-    const handleVariationChange = (productId, newImage) => {
-        setSelectedImages((prevImages) => ({
-            ...prevImages,
-            [productId]: newImage,
-        }));
-    };
+const handleVariationChange = (productId, variation) => {
+  setSelectedVariations((prev) => ({
+    ...prev,
+    [productId]: variation,
+  }));
+};
 
     // Pagination logic
     const totalPages = Math.ceil(products.length / productsPerPage);
@@ -79,8 +78,10 @@ const ProductList = ({ categoryId }) => {
                     <p className="text-center text-green-900">No products available.</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {currentProducts.map((product) => (
-                            <Link
+                        {currentProducts.map((product) => {
+                            const selected = selectedVariations[product._id] || product.variations[0];
+                            return(
+                                <Link
                                 key={product._id}
                                 to={`/product/${product._id}`}
                                 state={{ product }}
@@ -90,7 +91,7 @@ const ProductList = ({ categoryId }) => {
                                     {/* Main Product Image */}
                                     <img
                                         className="w-full object-cover object-center"
-                                        src={selectedImages[product._id]}
+                                        src={selected.images[0]}
                                         alt={product.name}
                                         style={{
                                             height: "300px"
@@ -104,17 +105,17 @@ const ProductList = ({ categoryId }) => {
                                         <p className="text-gray-700">
                                             <span className="line-through mr-2 text-sm">₹{product.basePrice}</span>
                                             <span className="font-bold text-green-600 text-md">
-                                                ₹{product.variations[0].sizes[0].price}
+                                                ₹{selected.sizes[0].price}
                                             </span>
                                             <span className="ml-2 bg-red-500 text-white px-2 py-1 text-xs rounded">
-                                                -{product.variations[0].sizes[0].discount}%
+                                                -{selected.sizes[0].discount}%
                                             </span>
                                         </p>
 
                                         {/* Variation Thumbnails */}
                                         <div className="variations-container mt-2 flex gap-2">
                                             {product.variations.map((variation, index) => {
-                                                const isSelected = selectedImages[product._id] === variation.images[0];
+                                               const isSelected = selected === variation;
                                                 return (
                                                     <img
                                                         key={index}
@@ -127,7 +128,7 @@ const ProductList = ({ categoryId }) => {
                                                         onClick={(e) => {
                                                             e.preventDefault();
                                                             e.stopPropagation();
-                                                            handleVariationChange(product._id, variation.images[0]);
+                                                            handleVariationChange(product._id, variation);
                                                         }}
                                                     />
                                                 );
@@ -136,7 +137,8 @@ const ProductList = ({ categoryId }) => {
                                     </div>
                                 </div>
                             </Link>
-                        ))}
+                            )
+})}
                     </div>
 
                 )}

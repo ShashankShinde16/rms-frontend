@@ -33,7 +33,7 @@ const ProductListBy = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
   const user_token = Cookies.get("user_token");
-  const [selectedImages, setSelectedImages] = useState({}); // Track selected images
+  const [selectedVariations, setSelectedVariations] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -46,14 +46,14 @@ const ProductListBy = () => {
         const productsData = response.data.products;
         setProducts(productsData);
 
-        // Set default images for each product based on the first variation
-        const defaultImages = {};
+        const defaultVariations = {};
         productsData.forEach((product) => {
-          if (product.variations.length > 0 && product.variations[0].images.length > 0) {
-            defaultImages[product._id] = product.variations[0].images[0];
+          if (product.variations.length > 0) {
+            defaultVariations[product._id] = product.variations[0];
           }
         });
-        setSelectedImages(defaultImages);
+        setSelectedVariations(defaultVariations);
+
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -93,13 +93,14 @@ const ProductListBy = () => {
     fetchSubCategories();
   }, []);
 
-  // Handle image change on variation selection
-  const handleVariationChange = (productId, newImage) => {
-    setSelectedImages((prevImages) => ({
-      ...prevImages,
-      [productId]: newImage,
+  // Handle change in variation selection
+  const handleVariationChange = (productId, variation) => {
+    setSelectedVariations((prev) => ({
+      ...prev,
+      [productId]: variation,
     }));
   };
+
 
   const handleCategoryFilterChange = (id, isChecked) => {
     setSelectedCategories(prev =>
@@ -252,7 +253,7 @@ const ProductListBy = () => {
         </h2>
 
         {/* Filter Toggle Button (Mobile only) */}
-        <div className="md:hidden flex justify-end mb-4">
+        <div className="md:hidden flex justify-start mb-4">
           <button
             className="bg-gray-800 text-white px-4 py-2 rounded"
             onClick={() => setIsSidebarOpen(true)}
@@ -294,59 +295,62 @@ const ProductListBy = () => {
               </>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {currentProducts.map((product) => (
-                  <Link
-                    key={product._id}
-                    to={`/product/${product._id}`}
-                    state={{ product }}
-                    className="transform transition-transform hover:scale-[1.03]"
-                  >
-                    <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
+                {currentProducts.map((product) => {
+                  const selected = selectedVariations[product._id] || product.variations[0];
+                  return (
+                    <Link
+                      key={product._id}
+                      to={`/product/${product._id}`}
+                      state={{ product }}
+                      className="transform transition-transform hover:scale-[1.03]"
+                    >
+                      <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
 
-                      {/* Product Image */}
-                      <div
-                        className="w-full h-[250px] bg-center bg-cover"
-                        style={{ backgroundImage: `url(${selectedImages[product._id]})` }}
-                      ></div>
+                        {/* Product Image */}
+                        <div
+                          className="w-full h-[250px] bg-center bg-cover"
+                          style={{ backgroundImage: `url(${selected.images[0]})` }}
+                        ></div>
 
-                      {/* Product Info */}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                        {/* Product Info */}
+                        <div className="p-4">
+                          <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
 
-                        <p className="text-sm text-gray-700 mb-2">
-                          <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
-                          <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
-                          <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
-                            -{product.variations[0].sizes[0].discount}%
-                          </span>
-                        </p>
+                          <p className="text-sm text-gray-700 mb-2">
+                            <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
+                            <span className="text-green-700 font-bold">₹{selected.sizes[0].price}</span>
+                            <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
+                              -{selected.sizes[0].discount}%
+                            </span>
+                          </p>
 
-                        {/* Variations */}
-                        <div className="mt-2 flex gap-2">
-                          {product.variations.map((variation, index) => {
-                            const isSelected = selectedImages[product._id] === variation.images[0];
-                            return (
-                              <img
-                                key={index}
-                                src={variation.images[0]}
-                                alt={`${product.name} - Variation ${index + 1}`}
-                                className="w-8 h-8 rounded-full cursor-pointer border-2"
-                                style={{
-                                  borderColor: isSelected ? "#003e25" : "transparent",
-                                }}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleVariationChange(product._id, variation.images[0]);
-                                }}
-                              />
-                            );
-                          })}
+                          {/* Variations */}
+                          <div className="mt-2 flex gap-2">
+                            {product.variations.map((variation, index) => {
+                              const isSelected = selected === variation;
+                              return (
+                                <img
+                                  key={index}
+                                  src={variation.images[0]}
+                                  alt={`${product.name} - Variation ${index + 1}`}
+                                  className="w-8 h-8 rounded-full cursor-pointer border-2"
+                                  style={{
+                                    borderColor: isSelected ? "#003e25" : "transparent",
+                                  }}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleVariationChange(product._id, variation);
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  )
+                })}
               </div>
             )}
 

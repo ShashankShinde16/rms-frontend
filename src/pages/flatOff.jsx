@@ -11,7 +11,7 @@ const API_ALL_PRODUCTS = `${import.meta.env.VITE_API_BASE_URL}/products/`;
 
 const FlatOff = () => {
     const [products, setProducts] = useState([]);
-    const [selectedImages, setSelectedImages] = useState({});
+    const [selectedVariations, setSelectedVariations] = useState({});
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedSubCategories, setSelectedSubCategories] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
@@ -42,13 +42,14 @@ const FlatOff = () => {
 
                 setProducts(flat20Products);
 
-                const defaultImages = {};
-                flat20Products.forEach((product) => {
-                    if (product.variations?.[0]?.images?.[0]) {
-                        defaultImages[product._id] = product.variations[0].images[0];
+                const defaultVariations = {};
+                productsData.forEach((product) => {
+                    if (product.variations.length > 0) {
+                        defaultVariations[product._id] = product.variations[0];
                     }
                 });
-                setSelectedImages(defaultImages);
+                setSelectedVariations(defaultVariations);
+
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
@@ -73,10 +74,10 @@ const FlatOff = () => {
         fetchProducts();
     }, []);
 
-    const handleVariationChange = (productId, newImage) => {
-        setSelectedImages((prevImages) => ({
-            ...prevImages,
-            [productId]: newImage,
+    const handleVariationChange = (productId, variation) => {
+        setSelectedVariations((prev) => ({
+            ...prev,
+            [productId]: variation,
         }));
     };
 
@@ -225,7 +226,7 @@ const FlatOff = () => {
                     <h2 className="text-center text-2xl text-green-900 font-bold my-4">Flat {offerValue}% Off</h2>
 
                     {/* Filter Toggle (Mobile) */}
-                    <div className="md:hidden flex justify-end mb-4">
+                    <div className="md:hidden flex justify-start mb-4">
                         <button
                             className="bg-gray-800 text-white px-4 py-2 rounded"
                             onClick={() => setIsSidebarOpen(true)}
@@ -262,58 +263,61 @@ const FlatOff = () => {
                                 </>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                    {currentProducts.map((product) => (
-                                        <Link
-                                            key={product._id}
-                                            to={`/product/${product._id}`}
-                                            state={{ product }}
-                                            className="transform transition-transform hover:scale-[1.03]"
-                                        >
-                                            <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
+                                    {currentProducts.map((product) => {
+                                        const selected = selectedVariations[product._id] || product.variations[0];
+                                        return (
+                                            <Link
+                                                key={product._id}
+                                                to={`/product/${product._id}`}
+                                                state={{ product }}
+                                                className="transform transition-transform hover:scale-[1.03]"
+                                            >
+                                                <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-xl transition-all duration-300">
 
-                                                {/* Product Image */}
-                                                <div
-                                                    className="w-full h-64 bg-center bg-cover"
-                                                    style={{ backgroundImage: `url(${selectedImages[product._id]})` }}
-                                                ></div>
+                                                    {/* Product Image */}
+                                                    <div
+                                                        className="w-full h-64 bg-center bg-cover"
+                                                        style={{ backgroundImage: `url(${selected.images[0]})` }}
+                                                    ></div>
 
-                                                {/* Product Info */}
-                                                <div className="p-4">
-                                                    <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
-                                                    <p className="text-sm text-gray-700 mb-2">
-                                                        <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
-                                                        <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
-                                                        <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
-                                                            -{product.variations[0].sizes[0].discount}%
-                                                        </span>
-                                                    </p>
+                                                    {/* Product Info */}
+                                                    <div className="p-4">
+                                                        <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                                                        <p className="text-sm text-gray-700 mb-2">
+                                                            <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
+                                                            <span className="text-green-700 font-bold">₹{selected.sizes[0].price}</span>
+                                                            <span className="ml-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded">
+                                                                -{selected.sizes[0].discount}%
+                                                            </span>
+                                                        </p>
 
-                                                    {/* Variations */}
-                                                    <div className="flex mt-2">
-                                                        {product.variations.map((variation, index) => {
-                                                            const isSelected = selectedImages[product._id] === variation.images[0];
-                                                            return (
-                                                                <img
-                                                                    key={index}
-                                                                    src={variation.images[0]}
-                                                                    alt=""
-                                                                    className="w-8 h-8 rounded-full mr-2 border-2 cursor-pointer"
-                                                                    style={{
-                                                                        borderColor: isSelected ? "#003e25" : "transparent",
-                                                                    }}
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault();
-                                                                        e.stopPropagation();
-                                                                        handleVariationChange(product._id, variation.images[0]);
-                                                                    }}
-                                                                />
-                                                            );
-                                                        })}
+                                                        {/* Variations */}
+                                                        <div className="flex mt-2">
+                                                            {product.variations.map((variation, index) => {
+                                                                const isSelected = selected === variation;
+                                                                return (
+                                                                    <img
+                                                                        key={index}
+                                                                        src={variation.images[0]}
+                                                                        alt=""
+                                                                        className="w-8 h-8 rounded-full mr-2 border-2 cursor-pointer"
+                                                                        style={{
+                                                                            borderColor: isSelected ? "#003e25" : "transparent",
+                                                                        }}
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            handleVariationChange(product._id, variation);
+                                                                        }}
+                                                                    />
+                                                                );
+                                                            })}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    ))}
+                                            </Link>
+                                        )
+                                    })}
                                 </div>
                             )}
                         </div>
