@@ -176,19 +176,28 @@ const Navbar = () => {
             onClick={() => (user_token ? setProfileOpen(!profileOpen) : navigate("/login"))}
           />
           {profileOpen && (
-            <div className="absolute right-0 mt-2 bg-white border rounded shadow-md z-50">
-              <Link onClick={() => { setShowProfilePopup(true); setProfileOpen(false); }} className="block px-4 py-2 hover:bg-gray-100">Profile</Link>
+            <div className="absolute right-0 mt-2 bg-[#466351] border border-[#466351] rounded shadow-md z-50">
+              <Link
+                onClick={() => {
+                  setShowProfilePopup(true);
+                  setProfileOpen(false);
+                }}
+                className="block px-4 py-2 text-center text-white hover:bg-[#3a5245] transition-colors duration-200"
+              >
+                Profile
+              </Link>
               <button
                 onClick={() => {
                   Cookies.remove("user_details");
                   Cookies.remove("user_token");
                   navigate("/login");
                 }}
-                className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="block px-4 py-2 w-full text-white text-center hover:bg-[#3a5245] whitespace-nowrap transition-colors duration-200"
               >
                 Sign Out
               </button>
             </div>
+
           )}
         </div>
 
@@ -261,57 +270,57 @@ const Navbar = () => {
         ref={mobileMenuRef}
         className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}
       >
-      <Link to="/">Home</Link>
-      <Link to="/shop">Shop</Link>
-      <Link to="/coupon">Coupon</Link>
-      <Link to="/order">Order</Link>
-      <Link to="/about">About</Link>
-    </div >
+        <Link to="/">Home</Link>
+        <Link to="/shop">Shop</Link>
+        <Link to="/coupon">Coupon</Link>
+        <Link to="/order">Order</Link>
+        <Link to="/about">About</Link>
+      </div >
 
-      {/* Cart Drawer */ }
-  <div ref={cartRef} className={`cart-slider ${cartOpen ? "open" : ""}`}>
-    <h2>My Cart</h2>
-    {cartItemCount === 0 ? (
-      <p>No items in the cart yet!</p>
-    ) : (
-      <div className="cart-items">
-        {cart.cartItem.map((item) => {
-          const matchingVariation = item.productId.variations.find((variation) =>
-            variation.sizes.some((size) => size._id === item.variationId)
-          );
-          const selectedSize = matchingVariation?.sizes.find((size) => size._id === item.variationId) || null;
+      {/* Cart Drawer */}
+      <div ref={cartRef} className={`cart-slider ${cartOpen ? "open" : ""}`}>
+        <h2>My Cart</h2>
+        {cartItemCount === 0 ? (
+          <p>No items in the cart yet!</p>
+        ) : (
+          <div className="cart-items">
+            {cart.cartItem.map((item) => {
+              const matchingVariation = item.productId.variations.find((variation) =>
+                variation.sizes.some((size) => size._id === item.variationId)
+              );
+              const selectedSize = matchingVariation?.sizes.find((size) => size._id === item.variationId) || null;
 
-          return (
-            <div key={item._id} className="cart-item">
-              <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="cart-item-image" />
-              <div className="cart-item-details">
-                <h3>{item.productId.name}</h3>
-                <p>Size: {selectedSize?.size || "N/A"}</p>
-                <p>Price: ₹{selectedSize?.price || item.price}</p>
-                <select
-                  value={item.quantity}
-                  onChange={(e) => updateQuantity(item.productId._id, parseInt(e.target.value))}
-                  className="p-2 border rounded-md w-16 text-sm"
-                >
-                  {[...Array(selectedSize?.stock).keys()].map((num) => (
-                    <option key={num + 1} value={num + 1}>
-                      {num + 1}
-                    </option>
-                  ))}
-                </select>
-                <button className="remove-from-cart-btn" onClick={() => handleRemove(item._id)}>Remove</button>
-              </div>
-            </div>
-          );
-        })}
+              return (
+                <div key={item._id} className="cart-item">
+                  <img src={matchingVariation?.images?.[0] || item.image} alt={item.productId.name} className="cart-item-image" />
+                  <div className="cart-item-details">
+                    <h3>{item.productId.name}</h3>
+                    <p>Size: {selectedSize?.size || "N/A"}</p>
+                    <p>Price: ₹{selectedSize?.price || item.price}</p>
+                    <select
+                      value={item.quantity}
+                      onChange={(e) => updateQuantity(item.productId._id, parseInt(e.target.value))}
+                      className="p-2 border rounded-md w-16 text-sm"
+                    >
+                      {[...Array(selectedSize?.stock).keys()].map((num) => (
+                        <option key={num + 1} value={num + 1}>
+                          {num + 1}
+                        </option>
+                      ))}
+                    </select>
+                    <button className="remove-from-cart-btn" onClick={() => handleRemove(item._id)}>Remove</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <button className="hover:bg-green-700 bg-[#466351] text-white px-4 py-2 rounded-md mt-5" onClick={() => navigate("/cart")}>
+          View Cart
+        </button>
       </div>
-    )}
-    <button className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md mt-5" onClick={() => navigate("/cart")}>
-      View Cart
-    </button>
-  </div>
 
-  { showProfilePopup && <ProfilePopup me={user} onClose={() => setShowProfilePopup(false)} fetchUser={fetchUser} /> }
+      {showProfilePopup && <ProfilePopup me={user} onClose={() => setShowProfilePopup(false)} fetchUser={fetchUser} />}
     </nav >
   );
 };

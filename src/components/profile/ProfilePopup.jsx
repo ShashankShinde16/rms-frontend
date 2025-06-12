@@ -180,7 +180,7 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
                 <button
                   onClick={sendOtp}
                   disabled={loading}
-                  className="px-5 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
+                  className="px-5 py-2 rounded-lg bg-[#466351] text-white hover:bg-green-700"
                 >
                   {loading ? "Sending OTP..." : "Send OTP"}
                 </button>
@@ -213,8 +213,8 @@ const ProfilePopup = ({ me, onClose, fetchUser }) => {
               onClick={handleSubmit}
               disabled={loading || !isPhoneVerified}  // <-- Add check here
               className={`px-5 py-2 rounded-lg text-white transition ${loading || !isPhoneVerified
-                ? "bg-green-800 cursor-not-allowed"
-                : "bg-green-700 hover:bg-green-800"
+                ? "bg-[#466351] cursor-not-allowed"
+                : "bg-green-700 hover:bg-[#466351]"
                 }`}
             >
               {loading ? "Saving..." : (

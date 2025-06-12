@@ -52,7 +52,7 @@ const Coupon = () => {
             <Navbar />
 
             <div className="px-4 py-6 mt-12">
-                <h2 className="text-center text-3xl font-bold mb-8 text-green-800">Available Coupons</h2>
+                <h2 className="text-center text-3xl font-bold mb-8 text-[#466351]">Available Coupons</h2>
 
                 {coupons.length === 0 ? (
                     <>
@@ -69,10 +69,10 @@ const Coupon = () => {
                                 <div className="flex flex-col gap-2">
                                     <div className="text-sm text-gray-600">Use this code:</div>
                                     <div className="flex items-center justify-between bg-green-100 px-3 py-2 rounded-md">
-                                        <span className="font-semibold text-green-800 tracking-widest">{coupon.code}</span>
+                                        <span className="font-semibold text-[#466351] tracking-widest">{coupon.code}</span>
                                         <button
                                             onClick={() => handleCopy(coupon.code)}
-                                            className="text-green-700 hover:text-green-900 ml-2"
+                                            className="text-green-700 hover:text-[#466351] ml-2"
                                             title="Copy Code"
                                         >
                                             <FaCopy />

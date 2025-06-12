@@ -223,7 +223,7 @@ const FlatOff = () => {
          h-auto sm:h-auto md:h-[400px] lg:h-[500px]"/>
                     </div>
 
-                    <h2 className="text-center text-2xl text-green-900 font-bold my-4">Flat {offerValue}% Off</h2>
+                    <h2 className="text-center text-2xl text-[#466351] font-bold my-4">Flat {offerValue}% Off</h2>
 
                     {/* Filter Toggle (Mobile) */}
                     <div className="md:hidden flex justify-start mb-4">
@@ -259,7 +259,7 @@ const FlatOff = () => {
                             {currentProducts.length === 0 ? (
                                 <>
                                     <NoResults />
-                                    <p className="text-center text-green-900">No products with {offerValue}% off.</p>
+                                    <p className="text-center text-[#466351]">No products with {offerValue}% off.</p>
                                 </>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -282,7 +282,7 @@ const FlatOff = () => {
 
                                                     {/* Product Info */}
                                                     <div className="p-4">
-                                                        <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                                                        <h3 className="font-semibold text-lg text-[#466351] mb-1">{product.name}</h3>
                                                         <p className="text-sm text-gray-700 mb-2">
                                                             <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
                                                             <span className="text-green-700 font-bold">₹{selected.sizes[0].price}</span>

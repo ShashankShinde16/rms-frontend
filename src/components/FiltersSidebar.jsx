@@ -87,7 +87,7 @@ const FiltersSidebar = ({
             onClick={() => toggleFilter(filterName)}
             className={`px-4 py-2 rounded-full text-sm md:text-base transition-all duration-200
               ${activeFilter === filterName
-                ? 'bg-green-600 text-white shadow-md'
+                ? 'bg-[#466351] text-white shadow-md'
                 : 'bg-gray-100 text-gray-700 hover:bg-green-50 hover:text-green-700'}`}
           >
             {filterName}
@@ -98,7 +98,7 @@ const FiltersSidebar = ({
       {/* Filter Options */}
       {activeFilter && (
         <div>
-          <h3 className="text-xl font-semibold text-green-900 mb-4">{activeFilter}</h3>
+          <h3 className="text-xl font-semibold text-[#466351] mb-4">{activeFilter}</h3>
 
           {activeFilter === "Category" && (
             <ul className="space-y-3">
@@ -107,7 +107,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={cat._id}
-                    className="accent-green-600 w-4 h-4 transition-transform transform hover:scale-105"
+                    className="accent-[#466351] w-4 h-4 transition-transform transform hover:scale-105"
                     checked={selectedCategories.includes(cat._id)}
                     onChange={(e) => handleCheckboxChange(e, onCategoryChange, selectedCategories, setSelectedCategories)}
                   />
@@ -124,7 +124,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={sub._id}
-                    className="accent-green-600 w-4 h-4 transition-transform transform hover:scale-105"
+                    className="accent-[#466351] w-4 h-4 transition-transform transform hover:scale-105"
                     checked={selectedSubCategories.includes(sub._id)}
                     onChange={(e) => handleCheckboxChange(e, onSubCategoryChange, selectedSubCategories, setSelectedSubCategories)}
                   />
@@ -141,7 +141,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={size}
-                    className="accent-green-600 w-4 h-4 transition-transform transform hover:scale-105"
+                    className="accent-[#466351] w-4 h-4 transition-transform transform hover:scale-105"
                     checked={selectedSizes.includes(size)}
                     onChange={(e) => handleCheckboxChange(e, onSizeChange, selectedSizes, setSelectedSizes)}
                   />
@@ -159,7 +159,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={color}
-                    className="accent-green-600 w-4 h-4"
+                    className="accent-[#466351] w-4 h-4"
                     checked={selectedColors.map(c => c.toLowerCase()).includes(color.toLowerCase())}
                     onChange={(e) =>
                       handleCheckboxChange(
@@ -187,7 +187,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={fabric._id}
-                    className="accent-green-600 w-4 h-4 transition-transform transform hover:scale-105"
+                    className="accent-[#466351] w-4 h-4 transition-transform transform hover:scale-105"
                     checked={selectedFabrics.includes(fabric._id)}
                     onChange={(e) => handleCheckboxChange(e, (value, checked) => onFabricChange(fabric.name, checked), selectedFabrics, setSelectedFabrics)}
                   />
@@ -204,7 +204,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={id}
-                    className="accent-green-600 w-4 h-4 transition-transform transform hover:scale-105"
+                    className="accent-[#466351] w-4 h-4 transition-transform transform hover:scale-105"
                     checked={selectedOffers.includes(id)}
                     onChange={(e) => handleCheckboxChange(e, onDiscountChange, selectedOffers, setSelectedOffers)}
                   />
@@ -224,7 +224,7 @@ const FiltersSidebar = ({
                   <input
                     type="checkbox"
                     id={sleeve}
-                    className="accent-green-600 w-4 h-4 transition-transform transform hover:scale-105"
+                    className="accent-[#466351] w-4 h-4 transition-transform transform hover:scale-105"
                     checked={selectedSleeves.includes(sleeve)}
                     onChange={(e) =>
                       handleCheckboxChange(e, onSleeveChange, selectedSleeves, setSelectedSleeves)
@@ -241,12 +241,12 @@ const FiltersSidebar = ({
       {/* Selected Filters Summary */}
       {(selectedCategories.length > 0 || selectedSubCategories.length > 0 || selectedSizes.length > 0 || selectedFabrics.length > 0 || selectedOffers.length > 0 || selectedColors.length > 0 || selectedSleeves.length > 0) && (
         <div className="border-t border-gray-200 pt-4 space-y-2">
-          <h4 className="text-md font-semibold text-green-800">Selected Filters:</h4>
+          <h4 className="text-md font-semibold text-[#466351]">Selected Filters:</h4>
           <div className="flex flex-wrap gap-2">
             {selectedSubCategories.map((id) => {
               const name = subCategories.find(sub => sub._id === id)?.name || id;
               return (
-                <span key={id} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+                <span key={id} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                   <span>{name}</span>
                   <button onClick={() => handleRemoveSelected(id, 'subcategory')} className="text-red-500 hover:text-red-700">×</button>
                 </span>
@@ -255,7 +255,7 @@ const FiltersSidebar = ({
             {selectedCategories.map((id) => {
               const name = categories.find(cat => cat._id === id)?.name || id;
               return (
-                <span key={id} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+                <span key={id} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                   <span>{name}</span>
                   <button onClick={() => handleRemoveSelected(id, 'category')} className="text-red-500 hover:text-red-700">×</button>
                 </span>
@@ -263,19 +263,19 @@ const FiltersSidebar = ({
             })}
 
             {selectedSizes.map((size) => (
-              <span key={size} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+              <span key={size} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                 <span>{size}</span>
                 <button onClick={() => handleRemoveSelected(size, 'size')} className="text-red-500 hover:text-red-700">×</button>
               </span>
             ))}
             {selectedColors.map((color) => (
-              <span key={color} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+              <span key={color} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                 <span>{color}</span>
                 <button onClick={() => handleRemoveSelected(color, 'color')} className="text-red-500 hover:text-red-700">×</button>
               </span>
             ))}
             {selectedSleeves.map((sleeve) => (
-              <span key={sleeve} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+              <span key={sleeve} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                 <span>{sleeve}</span>
                 <button onClick={() => handleRemoveSelected(sleeve, 'sleeve')} className="text-red-500 hover:text-red-700">×</button>
               </span>
@@ -283,14 +283,14 @@ const FiltersSidebar = ({
             {selectedFabrics.map((id) => {
               const name = fabrics.find(f => f._id === id)?.name || id;
               return (
-                <span key={id} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+                <span key={id} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                   <span>{name}</span>
                   <button onClick={() => handleRemoveSelected(id, 'fabric')} className="text-red-500 hover:text-red-700">×</button>
                 </span>
               );
             })}
             {selectedOffers.map((id) => (
-              <span key={id} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
+              <span key={id} className="bg-green-100 text-[#466351] px-3 py-1 rounded-full text-sm flex items-center space-x-2 shadow-sm">
                 <span>{id.replace('discount-', '').replace('-', ' - ') + '% Off'}</span>
                 <button onClick={() => handleRemoveSelected(id, 'offer')} className="text-red-500 hover:text-red-700">×</button>
               </span>

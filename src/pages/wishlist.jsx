@@ -58,12 +58,12 @@ const Wishlist = () => {
             <Navbar />
 
             <div className="px-4 py-6 mt-12">
-                <h2 className="text-center text-2xl font-bold mb-6">My Wishlist</h2>
+                <h2 className="text-center text-[#466351] text-2xl font-bold mb-6">My Wishlist</h2>
 
                 {wishlist.length === 0 ? (
                     <>
                         <NoResults />
-                        <p className="text-center text-gray-500">Your wishlist is empty.</p>
+                        <p className="text-center text-[#466351]">Your wishlist is empty.</p>
                     </>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

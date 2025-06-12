@@ -50,7 +50,7 @@ const CategoryGrid = () => {
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-12 bg-white rounded-lg shadow-md transition-all duration-300">
-      <h2 className="text-center text-3xl font-bold text-green-800 mb-6">
+      <h2 className="text-center text-3xl font-bold text-[#466351] mb-6">
         Explore Categories
       </h2>
 
@@ -71,7 +71,7 @@ const CategoryGrid = () => {
               alt={category.name}
               className="w-full h-44 md:h-56 lg:h-96 object-cover"
             />
-            <div className="p-3 text-center font-semibold text-green-900 group-hover:text-green-700 transition">
+            <div className="p-3 text-center font-semibold text-[#466351] group-hover:text-green-700 transition">
               {category.name}
             </div>
           </Link>
@@ -83,11 +83,10 @@ const CategoryGrid = () => {
           <button
             onClick={handlePrev}
             disabled={currentPage === 0}
-            className={`p-3 rounded-full bg-white text-green-800 border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${
-              currentPage === 0
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-green-50 hover:shadow-md active:scale-95"
-            }`}
+            className={`p-3 rounded-full bg-white text-[#466351] border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-green-50 hover:shadow-md active:scale-95"
+              }`}
             title="Previous Page"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -95,18 +94,17 @@ const CategoryGrid = () => {
             </svg>
           </button>
 
-          <span className="text-sm text-green-800 font-medium">
+          <span className="text-sm text-[#466351] font-medium">
             Page {currentPage + 1} of {totalPages}
           </span>
 
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages - 1}
-            className={`p-3 rounded-full bg-white text-green-800 border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${
-              currentPage === totalPages - 1
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-green-50 hover:shadow-md active:scale-95"
-            }`}
+            className={`p-3 rounded-full bg-white text-[#466351] border border-green-400 shadow-sm transition duration-200 ease-in-out flex items-center justify-center ${currentPage === totalPages - 1
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-green-50 hover:shadow-md active:scale-95"
+              }`}
             title="Next Page"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">

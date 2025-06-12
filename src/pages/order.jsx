@@ -54,7 +54,7 @@ const Order = () => {
             <Navbar />
             <div className="p-6 mt-16 min-h-screen bg-gray-50">
                 <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto">
-                    <h2 className="text-3xl font-bold text-green-900">Your Orders</h2>
+                    <h2 className="text-3xl font-bold text-[#466351]">Your Orders</h2>
                     <select
                         value={sortOrder}
                         onChange={handleSortChange}
@@ -66,9 +66,9 @@ const Order = () => {
                 </div>
 
                 {loading ? (
-                    <p className="text-center text-green-900">Loading...</p>
+                    <p className="text-center text-[#466351]">Loading...</p>
                 ) : orders.length === 0 ? (
-                    <p className="text-center text-green-900">No orders found.</p>
+                    <p className="text-center text-[#466351]">No orders found.</p>
                 ) : (
                     <div className="grid gap-6 max-w-4xl mx-auto ">
                         {orders.map((order) => (

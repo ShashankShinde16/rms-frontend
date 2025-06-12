@@ -253,7 +253,7 @@ const SearchResults = () => {
             {currentProducts.length === 0 ? (
               <>
                 <NoResults />
-                <p className="text-center text-green-900">No products found.</p>
+                <p className="text-center text-[#466351]">No products found.</p>
               </>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -274,7 +274,7 @@ const SearchResults = () => {
 
                       {/* Product Info */}
                       <div className="p-4">
-                        <h3 className="font-semibold text-lg text-green-900 mb-1">{product.name}</h3>
+                        <h3 className="font-semibold text-lg text-[#466351] mb-1">{product.name}</h3>
                         <p className="text-sm text-gray-700 mb-2">
                           <span className="line-through mr-2 text-gray-400">₹{product.basePrice}</span>
                           <span className="text-green-700 font-bold">₹{product.variations[0].sizes[0].price}</span>
